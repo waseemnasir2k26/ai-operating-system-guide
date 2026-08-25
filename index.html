@@ -1,0 +1,1614 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      The AI Operating System — How I Run a One-Person Agency on Claude Code
+    </title>
+    <style>
+      :root {
+        --cream: #f7f4ec;
+        --paper: #ffffff;
+        --ink: #16181d;
+        --ink-soft: #4a5059;
+        --rust: #c66b3f;
+        --rust-soft: #f0e2d8;
+        --line: #e2ddd2;
+        --ok: #2f7d5b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      body {
+        margin: 0;
+        background: var(--cream);
+        color: var(--ink);
+        font-family:
+          "Inter",
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        font-size: 15.5px;
+        line-height: 1.65;
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 28px 80px;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Bricolage Grotesque", "Segoe UI Semibold", Georgia, serif;
+        line-height: 1.2;
+        letter-spacing: -0.015em;
+      }
+      h1 {
+        font-size: 2.6rem;
+        margin: 0 0 10px;
+      }
+      h2 {
+        font-size: 1.65rem;
+        margin: 52px 0 4px;
+        padding-top: 18px;
+        border-top: 2px solid var(--ink);
+      }
+      h3 {
+        font-size: 1.15rem;
+        margin: 28px 0 6px;
+      }
+      h4 {
+        font-size: 1rem;
+        margin: 18px 0 4px;
+        color: var(--rust);
+      }
+      p {
+        margin: 10px 0;
+      }
+      code,
+      kbd {
+        font-family: "IBM Plex Mono", Consolas, monospace;
+        font-size: 0.87em;
+        background: #eceadf;
+        padding: 1px 5px;
+        border-radius: 4px;
+      }
+      pre {
+        background: #1d2027;
+        color: #e9e6dc;
+        padding: 14px 16px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: "IBM Plex Mono", Consolas, monospace;
+        font-size: 0.8rem;
+        line-height: 1.55;
+      }
+      pre code {
+        background: none;
+        color: inherit;
+        padding: 0;
+      }
+      a {
+        color: var(--rust);
+      }
+      .hero {
+        background: linear-gradient(
+          135deg,
+          #1d2027 0%,
+          #33383f 55%,
+          #c66b3f 130%
+        );
+        color: #f7f4ec;
+        padding: 54px 28px 46px;
+        margin-bottom: 6px;
+      }
+      .hero .inner {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .hero h1 {
+        color: #fff;
+      }
+      .hero .sub {
+        font-size: 1.12rem;
+        color: #e6ddd0;
+        max-width: 640px;
+        margin-top: 14px;
+      }
+      .hero .meta {
+        margin-top: 22px;
+        font-size: 0.82rem;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: #c9b9a8;
+      }
+      .lede {
+        font-size: 1.08rem;
+        color: var(--ink-soft);
+        border-left: 4px solid var(--rust);
+        padding-left: 16px;
+        margin: 26px 0;
+      }
+      .card {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin: 16px 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 700px) {
+        .grid,
+        .grid3 {
+          grid-template-columns: 1fr;
+        }
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 14px 0;
+        font-size: 0.92rem;
+        background: var(--paper);
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 9px 11px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        background: #efece2;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .pill {
+        display: inline-block;
+        background: var(--rust-soft);
+        color: #8a4423;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin: 2px 4px 2px 0;
+      }
+      .pill.g {
+        background: #dff0e6;
+        color: #1f5c41;
+      }
+      .pill.b {
+        background: #e2e7f2;
+        color: #33477a;
+      }
+      .rule {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-left: 5px solid var(--rust);
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin: 12px 0;
+      }
+      .rule b {
+        display: block;
+        margin-bottom: 3px;
+      }
+      .toc {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 18px 24px;
+        margin: 28px 0 10px;
+        columns: 2;
+        column-gap: 36px;
+      }
+      @media (max-width: 700px) {
+        .toc {
+          columns: 1;
+        }
+      }
+      .toc a {
+        display: block;
+        padding: 3px 0;
+        text-decoration: none;
+        color: var(--ink);
+        font-size: 0.93rem;
+        break-inside: avoid;
+      }
+      .toc a:hover {
+        color: var(--rust);
+      }
+      ul,
+      ol {
+        padding-left: 22px;
+        margin: 8px 0;
+      }
+      li {
+        margin: 5px 0;
+      }
+      .small {
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
+      .flow {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 18px 0;
+        text-align: center;
+      }
+      .step {
+        display: inline-block;
+        background: #1d2027;
+        color: #fff;
+        border-radius: 8px;
+        padding: 8px 14px;
+        margin: 5px 3px;
+        font-size: 0.86rem;
+        font-weight: 600;
+      }
+      .step.r {
+        background: var(--rust);
+      }
+      .step.g {
+        background: var(--ok);
+      }
+      .arrow {
+        color: var(--rust);
+        font-weight: 700;
+        margin: 0 2px;
+      }
+      footer {
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 2px solid var(--ink);
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
+      .pb {
+        page-break-before: always;
+      }
+      @media print {
+        body {
+          background: #fff;
+          font-size: 10.5pt;
+        }
+        .wrap {
+          max-width: 100%;
+          padding: 0;
+        }
+        .hero {
+          margin: 0 0 6px;
+        }
+        h2 {
+          page-break-after: avoid;
+        }
+        .card,
+        .rule,
+        table,
+        .flow {
+          page-break-inside: avoid;
+        }
+        .noprint {
+          display: none;
+        }
+        @page {
+          margin: 14mm;
+        }
+      }
+      .printbtn {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background: var(--rust);
+        color: #fff;
+        border: none;
+        border-radius: 999px;
+        padding: 13px 22px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+        z-index: 99;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero">
+      <div class="inner">
+        <h1>The AI Operating System</h1>
+        <div class="sub">
+          How one person runs a full digital agency — websites, video, ads,
+          automation, outreach — on top of Claude Code. The daily stack, the
+          rules, and the workflows, written for a friend who wants to copy it.
+        </div>
+        <div class="meta">
+          Practitioner guide &middot; v1.0 &middot; August 2026
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <p class="lede">
+        This isn't "10 AI tools you should try." It's the actual operating
+        system: how work gets decomposed, which agent does it, what gate it must
+        pass before it goes out, and the hard-won rules that stop expensive
+        mistakes from repeating. Everything here is generic — no client names,
+        no credentials, no private data.
+      </p>
+
+      <div class="toc">
+        <a href="#one">1 — The Core Idea</a>
+        <a href="#two">2 — The Four Layers</a>
+        <a href="#three">3 — Memory: The Brain</a>
+        <a href="#four">4 — Skills: Frozen Procedures</a>
+        <a href="#five">5 — Subagents &amp; Parallelism</a>
+        <a href="#six">6 — The Daily Loop</a>
+        <a href="#seven">7 — Web &amp; Client Delivery</a>
+        <a href="#eight">8 — Video Production Pipeline</a>
+        <a href="#nine">9 — Content &amp; Distribution</a>
+        <a href="#ten">10 — Automation (n8n / VPS)</a>
+        <a href="#eleven">11 — Paid Ads Discipline</a>
+        <a href="#twelve">12 — Quality Gates</a>
+        <a href="#thirteen">13 — Hard Rules (Scar Tissue)</a>
+        <a href="#fourteen">14 — Machine &amp; Cost Discipline</a>
+        <a href="#fifteen">15 — Build Your Own in 7 Days</a>
+      </div>
+
+      <h2 id="one">1 — The Core Idea</h2>
+
+      <p>
+        Most people use AI as a <b>chat box</b>: ask, get text, paste somewhere,
+        forget. That caps out fast, because the model starts every conversation
+        with amnesia and no hands.
+      </p>
+
+      <p>
+        The shift is to treat AI as an <b>operating system for the business</b>.
+        Three things change:
+      </p>
+
+      <div class="grid3">
+        <div class="card">
+          <h4>It remembers</h4>
+          <p class="small">
+            Durable facts live in files on disk, not in the chat. Every new
+            session loads the index automatically.
+          </p>
+        </div>
+        <div class="card">
+          <h4>It has hands</h4>
+          <p class="small">
+            Terminal, filesystem, git, browser, ffmpeg, APIs. It doesn't
+            describe the fix — it makes it and verifies it.
+          </p>
+        </div>
+        <div class="card">
+          <h4>It has procedures</h4>
+          <p class="small">
+            Repeated workflows are frozen into skills. You stop re-explaining
+            and start invoking.
+          </p>
+        </div>
+      </div>
+
+      <div class="rule">
+        <b>The governing principle</b> A prompt you have typed three times is a
+        bug. Convert it into a skill (a procedure) or a memory (a fact). The
+        system should get cheaper to operate every week, not more expensive.
+      </div>
+
+      <h3>What "one-person agency" actually means here</h3>
+      <p>
+        Website builds, video editing, paid ads, cold outreach, client
+        reporting, and internal ops all run through one terminal. The human does
+        three things the machine can't: pick the direction, approve money and
+        outward-facing sends, and make taste calls. Everything between those
+        decisions is delegated.
+      </p>
+
+      <h2 id="two">2 — The Four Layers</h2>
+
+      <table>
+        <tr>
+          <th style="width: 18%">Layer</th>
+          <th style="width: 26%">What it is</th>
+          <th>Why it exists</th>
+        </tr>
+        <tr>
+          <td><b>Memory</b></td>
+          <td>Markdown files on disk + a thin index loaded every session</td>
+          <td>
+            So the assistant knows the state of the business without being
+            re-briefed
+          </td>
+        </tr>
+        <tr>
+          <td><b>Rules</b></td>
+          <td>
+            A global instruction file — facts that are <em>always</em> true
+          </td>
+          <td>
+            Non-negotiables: how to behave, what never to do, house standards
+          </td>
+        </tr>
+        <tr>
+          <td><b>Skills</b></td>
+          <td>Versioned procedure files, invoked as <code>/name</code></td>
+          <td>
+            Repeatable multi-step workflows with their gotchas already baked in
+          </td>
+        </tr>
+        <tr>
+          <td><b>Agents</b></td>
+          <td>Specialist sub-assistants with their own context + tool set</td>
+          <td>
+            Parallelism and separation of concerns — a builder never grades
+            itself
+          </td>
+        </tr>
+      </table>
+
+      <div class="flow">
+        <span class="step">Request</span><span class="arrow">→</span>
+        <span class="step">Memory loads state</span><span class="arrow">→</span>
+        <span class="step r">Skill supplies procedure</span
+        ><span class="arrow">→</span>
+        <span class="step r">Agents execute in parallel</span
+        ><span class="arrow">→</span>
+        <span class="step g">Gate grades output</span
+        ><span class="arrow">→</span>
+        <span class="step g">Out the door</span>
+      </div>
+
+      <h4>The critical distinction</h4>
+      <p>
+        <b>Rules file = facts always true.</b> "Never freeze the machine during
+        a render." "Read code before modifying it."<br />
+        <b>Skill = a procedure you'd otherwise re-paste.</b> "Here are the 14
+        steps to turn a raw phone clip into a finished vertical video with
+        captions."
+      </p>
+      <p>
+        Getting this wrong is the most common failure. People dump procedures
+        into the always-loaded rules file, it balloons to thousands of tokens,
+        and every single session pays for instructions it doesn't need.
+      </p>
+
+      <h2 id="three">3 — Memory: The Brain</h2>
+
+      <p>
+        Memory is a folder of small markdown files. One fact per file. Each file
+        has a name, a one-line description, and a type. A single
+        <code>MEMORY.md</code> index — one line per memory — is the only thing
+        loaded at session start.
+      </p>
+
+      <h3>Four memory types</h3>
+      <table>
+        <tr>
+          <th style="width: 16%">Type</th>
+          <th>Contents</th>
+          <th style="width: 34%">Example shape</th>
+        </tr>
+        <tr>
+          <td><span class="pill b">user</span></td>
+          <td>Who the operator is: role, expertise, standing preferences</td>
+          <td>"Prefers deliverables as self-contained HTML, not markdown"</td>
+        </tr>
+        <tr>
+          <td><span class="pill">feedback</span></td>
+          <td>
+            Corrections and confirmed approaches — <em>always with the why</em>
+          </td>
+          <td>
+            "A commit proves nothing about production. Check the live
+            environment."
+          </td>
+        </tr>
+        <tr>
+          <td><span class="pill g">project</span></td>
+          <td>Ongoing work, goals, constraints not derivable from the code</td>
+          <td>
+            "Build X is blocked pending a design decision from the client"
+          </td>
+        </tr>
+        <tr>
+          <td><span class="pill b">reference</span></td>
+          <td>Pointers: dashboards, tickets, docs, environment facts</td>
+          <td>
+            "The render library lives at <code>_lib/</code> and exposes these
+            helpers"
+          </td>
+        </tr>
+      </table>
+
+      <h3>The rules that keep memory useful</h3>
+      <ul>
+        <li>
+          <b>One fact per file.</b> Bundled files never get updated correctly
+          and never get deleted.
+        </li>
+        <li>
+          <b>Never store what the repo already records.</b> Code structure, past
+          fixes, git history — the machine can read those. Memory is for what
+          <em>isn't</em> written down.
+        </li>
+        <li>
+          <b>Convert relative dates to absolute.</b> "Next week" is meaningless
+          three months later.
+        </li>
+        <li>
+          <b>Link liberally</b> with wiki-style links. A link to a memory that
+          doesn't exist yet is a to-do, not an error.
+        </li>
+        <li>
+          <b>Delete wrong memories immediately.</b> A stale fact is worse than a
+          missing one, because it's trusted.
+        </li>
+      </ul>
+
+      <div class="rule">
+        <b>The highest-leverage memory type is <em>feedback</em></b> Every time
+        the system makes an expensive mistake, the fix is not "be more careful
+        next time" — it's a feedback memory with the trigger, the failure mode,
+        and the why. That mistake then structurally cannot recur. This is the
+        compounding mechanism of the entire system.
+      </div>
+
+      <h3>Checkpoints</h3>
+      <p>
+        At the end of a working session, state gets written to a dated
+        checkpoint file: what got done, what's blocked, what's next. Tomorrow's
+        session opens with yesterday's ending. No re-briefing, no "where were
+        we."
+      </p>
+
+      <h2 id="four" class="pb">4 — Skills: Frozen Procedures</h2>
+
+      <p>
+        A skill is a markdown file with frontmatter (name, description, trigger
+        phrases) and a body (the steps). When a request matches the description,
+        it loads automatically. You can also invoke it directly with
+        <code>/name</code>.
+      </p>
+
+      <h3>Anatomy of a good skill</h3>
+      <pre><code>---
+name: finish-video
+description: Turn a finished cut into per-platform outputs.
+  Trigger on "finish this video", "wrap the reel", "/finish-video",
+  or when a final master exists and needs distribution assets.
+---
+
+## Preconditions
+- Master file exists and passed the render gate
+- Captions verified against the RENDERED file, not the source
+
+## Steps
+1. Probe the master (codec, resolution, audio rate) and ASSERT, don't print
+2. Run the copyright gate on the audio bed
+3. Generate per-platform captions from the copy template
+4. Build the schedule payload
+5. Hand to the human for the final send
+
+## Gotchas
+- Audio normalization can silently resample; force the output rate
+- A "success" exit code from the encoder is not proof of a valid file
+</code></pre>
+
+      <h3>What separates a skill that fires from one that never does</h3>
+      <div class="grid">
+        <div class="card">
+          <h4>Strong triggers</h4>
+          <p class="small">
+            The description must contain the literal phrases a human would
+            actually type. Vague descriptions never auto-invoke, and an
+            uninvoked skill is dead weight.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Gotchas section</h4>
+          <p class="small">
+            This is the entire value. Anyone can write the happy path. The skill
+            earns its keep by carrying the six things that went wrong the first
+            four times.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Runnable steps</h4>
+          <p class="small">
+            Real commands with real paths, not "then process the file." If a
+            step needs a human decision, say so explicitly.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Preconditions</h4>
+          <p class="small">
+            State what must be true before step 1. Half of all skill failures
+            are a missing input nobody checked for.
+          </p>
+        </div>
+      </div>
+
+      <h3>Categories in daily use</h3>
+      <table>
+        <tr>
+          <th style="width: 22%">Category</th>
+          <th>What it covers</th>
+        </tr>
+        <tr>
+          <td><b>Build</b></td>
+          <td>
+            Site scaffolds, design systems, deploy chains, client onboarding,
+            repo QA
+          </td>
+        </tr>
+        <tr>
+          <td><b>Video</b></td>
+          <td>
+            Cut, caption, grade, overlay, thumbnail, copyright check, ship gate,
+            distribution
+          </td>
+        </tr>
+        <tr>
+          <td><b>Content</b></td>
+          <td>
+            Post packs, carousels, long-form scripts, humanizer pass, scheduling
+          </td>
+        </tr>
+        <tr>
+          <td><b>Ads</b></td>
+          <td>
+            Plan, launch, monitor, fatigue detection, budget reallocation, kill
+            rules
+          </td>
+        </tr>
+        <tr>
+          <td><b>Ops</b></td>
+          <td>
+            Daily brief, realign/prioritize, machine audit, storage audit,
+            checkpoint
+          </td>
+        </tr>
+        <tr>
+          <td><b>Meta</b></td>
+          <td>
+            Skill-builder (build new skills), critic-loop (grade anything),
+            council (multi-model)
+          </td>
+        </tr>
+      </table>
+
+      <p class="small">
+        The count matters less than the discipline: every skill exists because a
+        workflow was performed by hand at least twice and hurt the second time.
+      </p>
+
+      <h2 id="five">5 — Subagents &amp; Parallelism</h2>
+
+      <p>
+        A subagent is a separate assistant instance with its own context window,
+        its own tool permissions, and a narrow mission. It reports back a
+        synthesis — not a dump of everything it read.
+      </p>
+
+      <h3>Why this is the single biggest speed unlock</h3>
+      <p>
+        Sequential work is the default and it's almost always wrong. If four
+        sub-tasks have no dependencies between them, they should run at the same
+        time. Four 30-minute tasks become 30 minutes of wall-clock, not two
+        hours.
+      </p>
+
+      <div class="flow">
+        <span class="step">Decompose task</span><span class="arrow">→</span>
+        <span class="step r">Agent A</span> <span class="step r">Agent B</span>
+        <span class="step r">Agent C</span> <span class="step r">Agent D</span>
+        <span class="arrow">→</span><span class="step g">Merge + gate</span>
+        <div class="small" style="margin-top: 10px">
+          All four launched in ONE message. Launched one-by-one, they run
+          sequentially and you lose the entire benefit.
+        </div>
+      </div>
+
+      <h3>Elite briefs, not baby prompts</h3>
+      <p>
+        The quality of a subagent's output is almost entirely determined by the
+        brief. A thin brief ("look into the auth thing") returns thin work. A
+        full brief has six parts:
+      </p>
+      <ol>
+        <li>
+          <b>Mission + done-definition</b> — what "finished" concretely looks
+          like
+        </li>
+        <li>
+          <b>Full context handoff</b> — the agent can't see your conversation;
+          give it everything
+        </li>
+        <li>
+          <b>Autonomy mandate</b> — explicitly authorize it to make decisions
+          without checking back
+        </li>
+        <li><b>Quality bar</b> — what standard it's being held to</li>
+        <li>
+          <b>Right specialist</b> — a security auditor, not a generalist, for a
+          security sweep
+        </li>
+        <li>
+          <b>Return contract</b> — "return a synthesis, decisions made, and
+          artifact paths — not file contents"
+        </li>
+      </ol>
+
+      <h3>Specialist roster (generic pattern)</h3>
+      <table>
+        <tr>
+          <th style="width: 26%">Agent</th>
+          <th>Mission</th>
+        </tr>
+        <tr>
+          <td><b>Researcher</b></td>
+          <td>
+            Multi-source web research in an isolated context, returns synthesis
+            only. Keeps 40 pages of scraped text out of the main conversation.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Explorer</b></td>
+          <td>
+            Read-only fan-out search across a large codebase. Locates things;
+            doesn't judge them.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Builder specialists</b></td>
+          <td>
+            Framework-specific implementers — a WordPress builder, a frontend
+            builder, a TypeScript specialist.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Auditors</b></td>
+          <td>
+            Security sweep, site pre-ship audit, content/copy QA. All read-only
+            by design.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Planner / executive</b></td>
+          <td>
+            Decomposes a fuzzy goal into a routed, prioritized execution plan.
+            Plans only — never builds, never spawns.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Curator</b></td>
+          <td>
+            Keeps the memory vault clean: orphans, stale entries, broken links.
+          </td>
+        </tr>
+      </table>
+
+      <div class="rule">
+        <b>An agent never grades its own work</b> The builder is invested in the
+        build. Grading always goes to a fresh-context agent that didn't write
+        the thing, ideally one instructed to default to FAIL on uncertainty.
+        This single rule catches more defects than any other practice in the
+        system.
+      </div>
+
+      <h3>Worktree isolation</h3>
+      <p>
+        When multiple agents edit files in parallel, they collide. The fix is
+        git worktrees: each agent gets its own isolated checkout, does its work,
+        opens its own change. Merge smallest-first so later rebases stay
+        trivial. Blast radius per agent is one worktree; a crashed agent doesn't
+        take down the other three.
+      </p>
+
+      <h2 id="six" class="pb">6 — The Daily Loop</h2>
+
+      <div class="flow">
+        <span class="step"
+          >Session opens<br /><span class="small" style="color: #bbb"
+            >priorities auto-injected</span
+          ></span
+        ><span class="arrow">→</span>
+        <span class="step r">Money work first</span><span class="arrow">→</span>
+        <span class="step r">Build</span><span class="arrow">→</span>
+        <span class="step g">Gate</span><span class="arrow">→</span>
+        <span class="step g">Checkpoint</span><span class="arrow">→</span>
+        <span class="step">Nightly realign</span>
+      </div>
+
+      <h3>Morning: context is already loaded</h3>
+      <p>
+        A session-start hook injects today's priorities, the daily note, and any
+        follow-ups that have gone silent past their cadence. There is no "let me
+        catch you up" phase. The first message of the day is already about work.
+      </p>
+
+      <h3>The follow-up re-fire</h3>
+      <p>
+        The most valuable automation in the entire stack is embarrassingly
+        simple: a check that lists every outstanding item with no reply past its
+        follow-up window, and drafts the nudge. Deals die from unfired
+        follow-ups far more often than from rejection. Automating the
+        <em>reminder to follow up</em> — not the sending — beats automating
+        almost anything else.
+      </p>
+
+      <h3>Evening: realign</h3>
+      <p>
+        A nightly job reads the memory index, the day's activity, and rewrites
+        the entire task universe into one ranked plan for tomorrow: revenue
+        first, blocked-on-human items surfaced explicitly, dead items culled,
+        stale entries flagged. That plan is what the morning hook injects. The
+        loop closes.
+      </p>
+
+      <h3>Working modes</h3>
+      <div class="grid">
+        <div class="card">
+          <h4>Plan mode gate</h4>
+          <p class="small">
+            Before any billable or multi-file change: draft the plan, get it
+            approved, <em>then</em> execute. The plan doubles as the client
+            sign-off artifact and the billing record.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Compressed mode</h4>
+          <p class="small">
+            A terse output mode for long sessions. Drops filler and hedging,
+            keeps all technical substance. Meaningful token savings on
+            multi-hour work.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Context hygiene</h4>
+          <p class="small">
+            Clear when switching projects. Compact at milestones. A context
+            stuffed with three unrelated projects produces confused work.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Capture-before-close</h4>
+          <p class="small">
+            Any session that produced a hard-won fix writes it to a skill or
+            memory <em>before</em> the session ends. Otherwise it evaporates and
+            gets re-learned at full price.
+          </p>
+        </div>
+      </div>
+
+      <h2 id="seven">7 — Web &amp; Client Delivery</h2>
+
+      <div class="flow">
+        <span class="step">Onboard</span><span class="arrow">→</span
+        ><span class="step">Research</span><span class="arrow">→</span>
+        <span class="step r">Design system</span><span class="arrow">→</span
+        ><span class="step r">Build</span><span class="arrow">→</span>
+        <span class="step g">Audit</span><span class="arrow">→</span
+        ><span class="step g">Deploy</span><span class="arrow">→</span
+        ><span class="step g">Verify live</span>
+      </div>
+
+      <h3>Onboarding is a hard gate</h3>
+      <p>
+        Every new client repo starts with a structured onboarding pass that
+        captures the thing everyone forgets until it breaks:
+        <b>the deploy target and its specific quirks</b>. Some hosts take a git
+        push. Some take a manual archive upload. Some need a cache purge
+        afterward or the old build stays live. Writing that down once, per
+        client, at the start, prevents the "why is my fix not showing" hour
+        later.
+      </p>
+
+      <h3>Speculative builds beat proposals</h3>
+      <p>
+        For a competitive pitch, a working demo outperforms a document. But two
+        rules are absolute:
+      </p>
+      <div class="rule">
+        <b>Never let a spec demo tell a lie</b> If a demo shows metrics,
+        testimonials, or logos, they must be labelled as illustrative above the
+        fold — not buried in a footer. Fabricated proof in a pitch is the
+        fastest way to lose a client you were about to win, and it can outlive
+        the pitch on the open web.
+      </div>
+
+      <h3>Pre-ship audit dimensions</h3>
+      <table>
+        <tr>
+          <th style="width: 24%">Dimension</th>
+          <th>Checked for</th>
+        </tr>
+        <tr>
+          <td>Responsive</td>
+          <td>
+            Real breakpoints on real viewports — not a desktop window resized
+          </td>
+        </tr>
+        <tr>
+          <td>Links</td>
+          <td>
+            Every internal and external link resolved; no 404s, no placeholder
+            anchors
+          </td>
+        </tr>
+        <tr>
+          <td>SEO / structure</td>
+          <td>Meta, heading hierarchy, structured data, canonical, sitemap</td>
+        </tr>
+        <tr>
+          <td>Performance</td>
+          <td>Core Web Vitals signals, image weight, render-blocking assets</td>
+        </tr>
+        <tr>
+          <td>Leftovers</td>
+          <td>Lorem ipsum, TODO comments, dummy emails, test data</td>
+        </tr>
+        <tr>
+          <td>Accessibility</td>
+          <td>Contrast, focus states, alt text, keyboard reachability</td>
+        </tr>
+        <tr>
+          <td>Security</td>
+          <td>Exposed keys, dependency advisories, misconfigured headers</td>
+        </tr>
+      </table>
+
+      <h3>Deliverable format</h3>
+      <p>
+        Client-facing documents ship as
+        <b>self-contained HTML with a print-to-PDF button</b>, on a bright
+        theme. Not markdown, not a raw doc. One file, zero dependencies, opens
+        anywhere, prints clean. A client should never need a tool they don't
+        have to read your work.
+        <span class="small">(This guide is built exactly that way.)</span>
+      </p>
+
+      <h2 id="eight" class="pb">8 — Video Production Pipeline</h2>
+
+      <p>
+        Video is where the most scar tissue lives, because the failure modes are
+        silent. A render can "succeed," produce a file, and still be unusable —
+        wrong audio rate, missing frames, a privacy leak in one corner of one
+        shot.
+      </p>
+
+      <div class="flow">
+        <span class="step">Ingest</span><span class="arrow">→</span
+        ><span class="step">Cut</span><span class="arrow">→</span>
+        <span class="step r">Grade + overlay</span><span class="arrow">→</span
+        ><span class="step r">Captions</span><span class="arrow">→</span>
+        <span class="step r">Audio bed + duck</span><span class="arrow">→</span
+        ><span class="step g">Gates</span><span class="arrow">→</span>
+        <span class="step g">Thumbnail</span><span class="arrow">→</span
+        ><span class="step g">Verify</span>
+      </div>
+
+      <h3>The gates that actually catch things</h3>
+      <table>
+        <tr>
+          <th style="width: 24%">Gate</th>
+          <th>What it asserts</th>
+        </tr>
+        <tr>
+          <td><b>Pixel gate</b></td>
+          <td>
+            A frame-by-frame pass over the <em>rendered</em> file at a real
+            sample rate. Re-reading the audio proves nothing about the picture.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Audio spec gate</b></td>
+          <td>
+            Asserts sample rate, channel layout, and a loudness floor on the
+            final file. Normalization filters can silently change the output
+            rate.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Copyright gate</b></td>
+          <td>
+            Fingerprints the music bed <em>before</em> upload. Catching a claim
+            beforehand costs minutes; catching it afterward costs the post.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Privacy gate</b></td>
+          <td>
+            Screens, whiteboards, documents, faces, filenames. Re-run after
+            <em>any</em> reframe.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Publication check</b></td>
+          <td>
+            Confirms the live post matches the intended master by frame hash —
+            not by duration.
+          </td>
+        </tr>
+      </table>
+
+      <div class="rule">
+        <b>Assert, don't print</b> A gate that prints a property and lets a
+        human eyeball it is not a gate. It must fail loudly on mismatch. "It
+        printed 48000" and "it asserted the rate is 48000" are different
+        programs, and only one of them catches the bug at 2am.
+      </div>
+
+      <div class="rule">
+        <b>Clearance is resolution-specific</b> If you clear a video at one
+        framing and later widen the crop or re-derive at higher resolution,
+        every clearance is void. The wider frame contains pixels nobody has ever
+        checked. Re-derive geometry from the original source and re-run every
+        gate.
+      </div>
+
+      <h3>Hybrid rendering</h3>
+      <p>
+        The pattern that works: assemble the heavy video with a fast native
+        encoder, render the fancy animated overlay separately as a transparent
+        alpha layer, then composite. Pushing 4K source through a JavaScript
+        animation renderer chokes; keeping them in separate lanes gives you both
+        premium motion and a render that finishes.
+      </p>
+
+      <h2 id="nine">9 — Content &amp; Distribution</h2>
+
+      <h3>The engine</h3>
+      <p>
+        One command produces a full day's pack across every channel — long post,
+        carousel, short-form script, platform-native variants. Voice is locked
+        to a template so output stays recognizably human and consistent rather
+        than drifting into generic assistant prose.
+      </p>
+
+      <h3>Three passes every piece must survive</h3>
+      <div class="grid3">
+        <div class="card">
+          <h4>Humanizer</h4>
+          <p class="small">
+            Strips AI tells: the em-dash tic, "in today's fast-paced world,"
+            tri-colon structures, hollow transitions, over-hedged claims.
+          </p>
+        </div>
+        <div class="card">
+          <h4>No-fake-claims</h4>
+          <p class="small">
+            Every number, result, and testimonial traces to something real.
+            Unverifiable claims get cut, not softened.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Anti-repetition</h4>
+          <p class="small">
+            Cross-day check so the same hook, anchor, or anecdote doesn't
+            recycle within a window. Readers notice before you do.
+          </p>
+        </div>
+      </div>
+
+      <h3>Specificity is the authenticity signal</h3>
+      <p>
+        Generic content reads as machine-written regardless of how well it's
+        phrased. Concrete detail woven into the body — a real place, a real
+        number, a real constraint you hit — is what makes it land. Woven, not
+        pasted: a specific sentence dropped into an otherwise generic paragraph
+        reads worse than no specificity at all.
+      </p>
+
+      <h3>Distribution rules learned the hard way</h3>
+      <ul>
+        <li>
+          <b>Platform classifiers move.</b> A CTA pattern that worked for a year
+          can start suppressing reach overnight. Retire tactics on evidence, not
+          on sentiment.
+        </li>
+        <li>
+          <b>Scheduling clock is the account's timezone, not yours.</b> Read it
+          live from the API every build. Assuming it burns an entire drip.
+        </li>
+        <li>
+          <b>Test row one before trusting the batch.</b> A ten-post schedule
+          built on a column misalignment produces ten broken posts.
+        </li>
+        <li>
+          <b>Publishing must be idempotent.</b> If a job re-runs, it must not
+          re-fire. Duplicate posts are worse than late posts.
+        </li>
+      </ul>
+
+      <h2 id="ten" class="pb">10 — Automation (n8n / VPS)</h2>
+
+      <p>
+        Long-running automations — inbox triage, lead pipelines, scheduled
+        sweeps — live on a small VPS running a workflow engine, not on the
+        laptop. The laptop is for building; the server is for running.
+      </p>
+
+      <h3>The loop gate — three caps and a breaker</h3>
+      <div class="rule">
+        <b>No automation loop goes live without all four</b>
+        <ol style="margin-top: 6px">
+          <li><b>Step cap</b> — maximum iterations per run</li>
+          <li><b>Wall-clock cap</b> — maximum runtime before forced stop</li>
+          <li><b>Spend cap</b> — maximum cost per run and per day</li>
+          <li>
+            <b>Circuit breaker</b> — an error-rate or anomaly threshold that
+            halts the loop and alerts a human
+          </li>
+        </ol>
+        <p style="margin-top: 8px">
+          All four live in <b>config</b>, never in a prompt. A cap that exists
+          only as an instruction in a prompt is not a cap — it's a suggestion to
+          a system that can misread it.
+        </p>
+      </div>
+
+      <h3>Monitor distribution, not liveness</h3>
+      <p>
+        "The workflow ran successfully" is a near-useless signal. A workflow
+        that ran 40 times and produced identical empty output every time reports
+        as perfectly healthy. Monitor the <em>shape of the output</em>: how many
+        items, what variety, what changed versus yesterday. Silent degradation
+        is the normal failure mode of automation, and liveness checks are blind
+        to it.
+      </p>
+
+      <h3>Outbound discipline</h3>
+      <ul>
+        <li>
+          <b>Low daily volume, warmed sender.</b> Volume is what kills domains,
+          not content.
+        </li>
+        <li>
+          <b>Validate addresses before sending.</b> Bounce rate is the
+          reputation metric that matters.
+        </li>
+        <li>
+          <b>Log every send to a ledger.</b> Without it you cannot answer "did
+          we already contact them" and you will double-send.
+        </li>
+        <li>
+          <b>Poll every folder, not just the inbox.</b> Replies land in spam and
+          get missed for weeks.
+        </li>
+        <li>
+          <b>AI review is a sensor, never a verdict.</b> It flags, scores, and
+          drafts. A human presses send on anything that leaves the building.
+        </li>
+      </ul>
+
+      <div class="rule">
+        <b>Audit the running estate, not the plan file</b> The plan says a
+        workflow is active. The plan is a document; it has no idea what the
+        server is doing. Before reporting status, query the actual engine, the
+        actual mailbox, the actual DNS. Documents drift from reality within
+        days, and a status report built from a document is fiction.
+      </div>
+
+      <h2 id="eleven">11 — Paid Ads Discipline</h2>
+
+      <h3>Tracking before spending</h3>
+      <p>
+        The most expensive ad mistake possible: run a campaign for days, get
+        clicks, get zero recorded conversions — and discover the conversion
+        event never fired because the tracking code was written but never
+        deployed, or an environment variable was never set in production.
+      </p>
+      <div class="rule">
+        <b
+          >Fire the conversion event manually and see it land before spending a
+          cent</b
+        >
+        Not "the code is committed." Not "it looks right." Trigger the real
+        event, watch it arrive in the platform's event dashboard, then turn on
+        budget.
+      </div>
+
+      <h3>Rules set before launch, not during</h3>
+      <table>
+        <tr>
+          <th style="width: 26%">Rule</th>
+          <th>Set in advance</th>
+        </tr>
+        <tr>
+          <td>Kill threshold</td>
+          <td>
+            Spend with zero conversions at which an ad is paused — decided
+            before launch, executed without renegotiation
+          </td>
+        </tr>
+        <tr>
+          <td>Learning floor</td>
+          <td>
+            Minimum data before <em>any</em> optimization decision. Reacting to
+            day-one numbers is reacting to noise.
+          </td>
+        </tr>
+        <tr>
+          <td>Fatigue signal</td>
+          <td>
+            Frequency and CTR-decay thresholds that trigger a creative refresh
+          </td>
+        </tr>
+        <tr>
+          <td>Reallocation cadence</td>
+          <td>How often budget moves and by what maximum step</td>
+        </tr>
+        <tr>
+          <td>Max concurrent tests</td>
+          <td>
+            A hard cap. More variants than you have traffic for teaches you
+            nothing, slowly.
+          </td>
+        </tr>
+      </table>
+
+      <h3>Read-only by default</h3>
+      <p>
+        The ads integration is configured read-only. Reporting, analysis, and
+        recommendations are automated; changing budgets or activating campaigns
+        requires a human. An automation bug that misreads a metric costs a wrong
+        report. The same bug with write access costs real money while you sleep.
+      </p>
+
+      <h2 id="twelve" class="pb">12 — Quality Gates</h2>
+
+      <p>
+        Nothing billable, deployable, or public goes out without an independent
+        grade from something that did not build it.
+      </p>
+
+      <h3>The critic loop</h3>
+      <div class="flow">
+        <span class="step">Build</span><span class="arrow">→</span>
+        <span class="step r">Independent critique</span
+        ><span class="arrow">→</span> <span class="step r">Fix</span
+        ><span class="arrow">→</span> <span class="step r">Re-critique</span
+        ><span class="arrow">→</span>
+        <span class="step g">PASS</span>
+        <div class="small" style="margin-top: 10px">
+          Loops until pass or a round limit. Judges default to FAIL on
+          uncertainty.
+        </div>
+      </div>
+
+      <h3>Design principles behind the gate</h3>
+      <ul>
+        <li>
+          <b>A false pass costs more than a false block.</b> Calibrate the whole
+          gate around that asymmetry.
+        </li>
+        <li>
+          <b>Multiple judges, reasons before scores.</b> Forcing the reasoning
+          first prevents a number being picked and then justified.
+        </li>
+        <li>
+          <b>A verification unit kills hallucinated faults.</b> Critics invent
+          problems too. Every finding must be reproducible against the artifact
+          or it's discarded.
+        </li>
+        <li>
+          <b>Resolved findings are tracked.</b> Otherwise round three re-raises
+          what round one fixed and the loop never converges.
+        </li>
+        <li>
+          <b>Auto-fail overrides every vote.</b> A verified exposed secret or an
+          unconsented identifiable face is a hard stop regardless of how good
+          everything else is.
+        </li>
+      </ul>
+
+      <h3>Green is not the same as good</h3>
+      <div class="rule">
+        <b
+          >Passing gates measures the absence of defects, not the presence of
+          quality</b
+        >
+        A video can clear every technical check — correct codec, clean audio, no
+        privacy leak — and still be badly edited. A site can pass every audit
+        and still be ugly and unconvincing. Automated gates catch
+        <em>failures</em>. Craft still requires a human with taste to watch it,
+        read it, and say yes. Never mistake a green board for a good
+        deliverable.
+      </div>
+
+      <h3>Multi-model review</h3>
+      <p>
+        For high-stakes work, a second and third model from different providers
+        review the same artifact. Different training produces genuinely
+        different blind spots; agreement across families is a much stronger
+        signal than one model's confidence. Used selectively — it costs real
+        tokens and most work doesn't need it.
+      </p>
+
+      <h2 id="thirteen">13 — Hard Rules (Scar Tissue)</h2>
+
+      <p>
+        Each of these exists because it was learned expensively. This section is
+        the most portable part of the document — these apply to almost anyone
+        doing AI-assisted work.
+      </p>
+
+      <div class="rule">
+        <b>Committed is not deployed</b> A commit proves nothing about
+        production. Before writing a "missing" feature, check for unpushed
+        commits and check whether the environment variable the code depends on
+        is actually set in the live environment. Fail-soft code produces
+        silence, not errors — so a broken integration looks exactly like a
+        working one that had nothing to do.
+      </div>
+
+      <div class="rule">
+        <b>Verify against reality, not against your notes</b> Query the running
+        system, the live mailbox, the actual DNS record. Never repoint an
+        endpoint without fetching what's currently there first — the "parking
+        page" you're about to overwrite may be the live site.
+      </div>
+
+      <div class="rule">
+        <b>Sent is not pending</b> Once something is sent, it's awaiting a reply
+        — not awaiting action. Tracking it as pending produces duplicate
+        follow-ups that read as desperate. Status comes from the mailbox, not
+        from a plan file.
+      </div>
+
+      <div class="rule">
+        <b>A spot check is not proof</b> Verifying three files out of two
+        hundred tells you three files are fine. If a claim covers a set, verify
+        the set or state the sample size explicitly.
+      </div>
+
+      <div class="rule">
+        <b>Regex sweeps hit more than intended</b> Bulk find-and-replace across
+        a repo always catches something you didn't picture. Dry-run first, read
+        the full match list, then apply.
+      </div>
+
+      <div class="rule">
+        <b>Opening a file for writing can destroy it before the write fails</b>
+        Truncating write modes empty the target the moment the handle opens. If
+        the script then throws, the data is gone. Write to a temp file and
+        atomically replace.
+      </div>
+
+      <div class="rule">
+        <b>Recursive scans can abort silently on a permission error</b> Some
+        tools return a clean zero-result on a partial failure. Zero results is a
+        suspicious answer, not a reassuring one — verify the scan actually
+        traversed everything before concluding "nothing found."
+      </div>
+
+      <div class="rule">
+        <b>Filenames re-identify anonymized material</b> You blurred the faces
+        and bleeped the names, then shipped a file whose name contains the
+        company. Grep the <em>rendered output and its metadata</em>, not the
+        source project.
+      </div>
+
+      <div class="rule">
+        <b>Exit code zero is not success</b> Encoders, uploaders, and API
+        clients all have paths that exit clean while producing garbage. Check
+        the artifact, not the return code.
+      </div>
+
+      <div class="rule">
+        <b>Local-only is not backed up</b> Know exactly which folders sync and
+        which don't. The assumption that "it's in the cloud folder" is how
+        irreplaceable footage disappears. Verify sync status per folder, in
+        writing, once.
+      </div>
+
+      <h2 id="fourteen" class="pb">14 — Machine &amp; Cost Discipline</h2>
+
+      <h3>Never freeze the box</h3>
+      <div class="rule">
+        <b>Every heavy job reserves a fixed share of CPU for the human</b>
+        Renders, encodes, batch processing — all run at lowered priority with a
+        headroom check before starting and a worker pool capped below the core
+        count. Never two heavy jobs at once.<br /><br />
+        A render that takes 40 minutes instead of 25 is fine. A frozen machine
+        for 25 minutes is a <b>failure</b>, because the human can't work, can't
+        review, can't respond to a client. Throughput of the machine is not the
+        metric. Throughput of the operator is.
+      </div>
+
+      <h3>Token discipline</h3>
+      <ul>
+        <li>
+          <b>Keep the always-loaded layer thin.</b> Every token in the global
+          rules file is paid on every single session forever. Procedures belong
+          in skills, loaded on demand.
+        </li>
+        <li>
+          <b>Compressed output mode</b> for long sessions — meaningful savings,
+          zero loss of substance.
+        </li>
+        <li>
+          <b>Isolate research in subagents.</b> Forty pages of scraped text
+          should never enter the main context; only the synthesis should.
+        </li>
+        <li>
+          <b>Return contracts.</b> Agents return conclusions and file paths,
+          never file dumps.
+        </li>
+        <li>
+          <b>Don't re-read.</b> If a file was read this session and hasn't
+          changed, reading it again is pure waste.
+        </li>
+        <li>
+          <b>Match model to task.</b> Mechanical work doesn't need the expensive
+          tier; the hardest reasoning and the final judge do.
+        </li>
+      </ul>
+
+      <h3>Security hygiene</h3>
+      <ul>
+        <li>
+          Secrets in environment variables and secret stores — never in prompts,
+          never in committed files, never in a plan document.
+        </li>
+        <li>
+          Secret scanning in the pre-ship gate, on the
+          <em>rendered output</em> as well as the source.
+        </li>
+        <li>
+          Least-privilege tokens. Read-only wherever write isn't strictly
+          required.
+        </li>
+        <li>
+          A scheduled audit of the machine and the estate — what's exposed,
+          what's stale, what's unpatched.
+        </li>
+        <li>
+          Cookie-based access to logged-in services stays read-only. Read and
+          draft; never auto-act on someone else's account.
+        </li>
+      </ul>
+
+      <h2 id="fifteen">15 — Build Your Own in 7 Days</h2>
+
+      <p>
+        Don't copy the whole thing. It took a long time and most of it is
+        specific to one business. Build the spine, then let your own scar tissue
+        fill it in.
+      </p>
+
+      <table>
+        <tr>
+          <th style="width: 12%">Day</th>
+          <th style="width: 30%">Build</th>
+          <th>Why this order</th>
+        </tr>
+        <tr>
+          <td><b>1</b></td>
+          <td>Global rules file — facts always true, 20 lines max</td>
+          <td>
+            Instant behavioral consistency. Resist the urge to make it long;
+            you'll pay for every line forever.
+          </td>
+        </tr>
+        <tr>
+          <td><b>2</b></td>
+          <td>
+            Memory folder + index. Write 5 facts your assistant re-asks about
+          </td>
+          <td>
+            Kills the re-briefing tax immediately. Most visible day-one win.
+          </td>
+        </tr>
+        <tr>
+          <td><b>3</b></td>
+          <td>Your first skill — the workflow you've explained most often</td>
+          <td>
+            Teaches the format on a case where you already know every gotcha.
+          </td>
+        </tr>
+        <tr>
+          <td><b>4</b></td>
+          <td>One quality gate on your highest-stakes output</td>
+          <td>
+            An independent grader on the thing that costs most when it's wrong.
+          </td>
+        </tr>
+        <tr>
+          <td><b>5</b></td>
+          <td>Parallel agents on one genuinely independent task set</td>
+          <td>
+            Feeling four-at-once is what changes how you scope everything after.
+          </td>
+        </tr>
+        <tr>
+          <td><b>6</b></td>
+          <td>A session-start hook injecting today's priorities</td>
+          <td>
+            Closes the loop between sessions. This is what makes it feel like a
+            system.
+          </td>
+        </tr>
+        <tr>
+          <td><b>7</b></td>
+          <td>Checkpoint + realign routine</td>
+          <td>State survives the session. Compounding starts here.</td>
+        </tr>
+      </table>
+
+      <h3>The three habits that matter more than any tool</h3>
+      <div class="grid3">
+        <div class="card">
+          <h4>Write the failure down</h4>
+          <p class="small">
+            Every expensive mistake becomes a memory with the trigger and the
+            why — the same day. Not "be careful next time." A rule, in a file.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Never grade your own work</h4>
+          <p class="small">
+            Independent review on anything that leaves the building. The builder
+            cannot see the build clearly.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Parallel by default</h4>
+          <p class="small">
+            Ask "do these depend on each other?" before every multi-part task.
+            Usually they don't, and sequential was a habit not a requirement.
+          </p>
+        </div>
+      </div>
+
+      <div class="rule">
+        <b>The one-line version</b> Give the AI memory so it stops forgetting,
+        procedures so it stops improvising, parallelism so it stops queueing,
+        and an independent judge so it stops shipping its own mistakes.
+        Everything else is detail.
+      </div>
+
+      <footer>
+        <p>
+          <b>The AI Operating System</b> — a practitioner's guide to running
+          real work on Claude Code.<br />
+          Generic by design: no client data, no credentials, no proprietary
+          internals. Every rule here was learned by breaking something first.
+        </p>
+        <p class="small">
+          Built as a single self-contained HTML file. Print to PDF from any
+          browser.
+        </p>
+      </footer>
+    </div>
+
+    <button class="printbtn noprint" onclick="window.print()">
+      Save as PDF
+    </button>
+  </body>
+</html>
