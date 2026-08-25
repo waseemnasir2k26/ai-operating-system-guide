@@ -4,7 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>
-      The AI Operating System — How I Run a One-Person Agency on Claude Code
+      The AI Operating System — A Beginner's Complete Guide to Running Real Work
+      on Claude Code
     </title>
     <style>
       :root {
@@ -16,6 +17,7 @@
         --rust-soft: #f0e2d8;
         --line: #e2ddd2;
         --ok: #2f7d5b;
+        --blue: #33477a;
       }
       * {
         box-sizing: border-box;
@@ -23,6 +25,7 @@
       html {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
+        scroll-behavior: smooth;
       }
       body {
         margin: 0;
@@ -35,7 +38,7 @@
           -apple-system,
           sans-serif;
         font-size: 15.5px;
-        line-height: 1.65;
+        line-height: 1.68;
       }
       .wrap {
         max-width: 900px;
@@ -51,49 +54,88 @@
         letter-spacing: -0.015em;
       }
       h1 {
-        font-size: 2.6rem;
+        font-size: 2.5rem;
         margin: 0 0 10px;
       }
       h2 {
-        font-size: 1.65rem;
-        margin: 52px 0 4px;
+        font-size: 1.6rem;
+        margin: 54px 0 4px;
         padding-top: 18px;
         border-top: 2px solid var(--ink);
       }
       h3 {
-        font-size: 1.15rem;
-        margin: 28px 0 6px;
+        font-size: 1.16rem;
+        margin: 30px 0 6px;
       }
       h4 {
         font-size: 1rem;
-        margin: 18px 0 4px;
+        margin: 20px 0 4px;
+        color: var(--rust);
+      }
+      .part {
+        margin: 70px 0 0;
+        background: #1d2027;
+        color: #f7f4ec;
+        border-radius: 12px;
+        padding: 22px 26px;
+      }
+      .part h2 {
+        border: none;
+        margin: 0;
+        padding: 0;
+        color: #fff;
+        font-size: 1.75rem;
+      }
+      .part p {
+        margin: 8px 0 0;
+        color: #c9c3b7;
+        font-size: 0.95rem;
+      }
+      .part .n {
+        font-size: 0.75rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
         color: var(--rust);
       }
       p {
-        margin: 10px 0;
+        margin: 11px 0;
       }
       code,
       kbd {
         font-family: "IBM Plex Mono", Consolas, monospace;
-        font-size: 0.87em;
+        font-size: 0.86em;
         background: #eceadf;
         padding: 1px 5px;
         border-radius: 4px;
+        word-break: break-word;
+      }
+      kbd {
+        background: #fff;
+        border: 1px solid #c9c3b7;
+        border-bottom-width: 2px;
+        font-size: 0.8em;
       }
       pre {
         background: #1d2027;
         color: #e9e6dc;
-        padding: 14px 16px;
+        padding: 15px 17px;
         border-radius: 8px;
         overflow-x: auto;
         font-family: "IBM Plex Mono", Consolas, monospace;
-        font-size: 0.8rem;
-        line-height: 1.55;
+        font-size: 0.79rem;
+        line-height: 1.6;
+        margin: 12px 0;
       }
       pre code {
         background: none;
         color: inherit;
         padding: 0;
+      }
+      pre .c {
+        color: #8b9a8f;
+      }
+      pre .k {
+        color: #e8a87c;
       }
       a {
         color: var(--rust);
@@ -106,7 +148,7 @@
           #c66b3f 130%
         );
         color: #f7f4ec;
-        padding: 54px 28px 46px;
+        padding: 56px 28px 48px;
         margin-bottom: 6px;
       }
       .hero .inner {
@@ -117,20 +159,20 @@
         color: #fff;
       }
       .hero .sub {
-        font-size: 1.12rem;
+        font-size: 1.1rem;
         color: #e6ddd0;
-        max-width: 640px;
+        max-width: 660px;
         margin-top: 14px;
       }
       .hero .meta {
-        margin-top: 22px;
-        font-size: 0.82rem;
+        margin-top: 24px;
+        font-size: 0.8rem;
         letter-spacing: 0.09em;
         text-transform: uppercase;
         color: #c9b9a8;
       }
       .lede {
-        font-size: 1.08rem;
+        font-size: 1.06rem;
         color: var(--ink-soft);
         border-left: 4px solid var(--rust);
         padding-left: 16px;
@@ -163,7 +205,7 @@
         width: 100%;
         border-collapse: collapse;
         margin: 14px 0;
-        font-size: 0.92rem;
+        font-size: 0.9rem;
         background: var(--paper);
       }
       th,
@@ -176,7 +218,7 @@
       th {
         background: #efece2;
         font-weight: 600;
-        font-size: 0.8rem;
+        font-size: 0.79rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
@@ -189,7 +231,7 @@
         color: #8a4423;
         border-radius: 999px;
         padding: 2px 10px;
-        font-size: 0.75rem;
+        font-size: 0.74rem;
         font-weight: 600;
         margin: 2px 4px 2px 0;
       }
@@ -199,52 +241,91 @@
       }
       .pill.b {
         background: #e2e7f2;
-        color: #33477a;
+        color: var(--blue);
       }
       .rule {
         background: #fff;
         border: 1px solid var(--line);
         border-left: 5px solid var(--rust);
         border-radius: 8px;
-        padding: 14px 18px;
-        margin: 12px 0;
+        padding: 15px 18px;
+        margin: 14px 0;
       }
-      .rule b {
+      .rule b:first-child {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .note {
+        background: #f2f5fb;
+        border: 1px solid #d6ddec;
+        border-left: 5px solid var(--blue);
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin: 14px 0;
+        font-size: 0.94rem;
+      }
+      .note b:first-child {
         display: block;
         margin-bottom: 3px;
+        color: var(--blue);
+      }
+      .warn {
+        background: #fdf6e8;
+        border: 1px solid #ecdcb8;
+        border-left: 5px solid #b8892b;
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin: 14px 0;
+        font-size: 0.94rem;
+      }
+      .warn b:first-child {
+        display: block;
+        margin-bottom: 3px;
+        color: #8a6415;
       }
       .toc {
         background: var(--paper);
         border: 1px solid var(--line);
         border-radius: 10px;
-        padding: 18px 24px;
+        padding: 20px 26px;
         margin: 28px 0 10px;
-        columns: 2;
-        column-gap: 36px;
       }
-      @media (max-width: 700px) {
-        .toc {
-          columns: 1;
-        }
+      .toc h4 {
+        margin: 14px 0 6px;
+        color: var(--rust);
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .toc h4:first-child {
+        margin-top: 0;
       }
       .toc a {
         display: block;
-        padding: 3px 0;
+        padding: 2px 0;
         text-decoration: none;
         color: var(--ink);
-        font-size: 0.93rem;
-        break-inside: avoid;
+        font-size: 0.92rem;
       }
       .toc a:hover {
         color: var(--rust);
       }
+      .toc .cols {
+        columns: 2;
+        column-gap: 32px;
+      }
+      @media (max-width: 700px) {
+        .toc .cols {
+          columns: 1;
+        }
+      }
       ul,
       ol {
         padding-left: 22px;
-        margin: 8px 0;
+        margin: 9px 0;
       }
       li {
-        margin: 5px 0;
+        margin: 6px 0;
       }
       .small {
         font-size: 0.85rem;
@@ -265,7 +346,7 @@
         border-radius: 8px;
         padding: 8px 14px;
         margin: 5px 3px;
-        font-size: 0.86rem;
+        font-size: 0.85rem;
         font-weight: 600;
       }
       .step.r {
@@ -279,8 +360,25 @@
         font-weight: 700;
         margin: 0 2px;
       }
+      .tree {
+        background: #1d2027;
+        color: #e9e6dc;
+        padding: 16px 18px;
+        border-radius: 8px;
+        font-family: "IBM Plex Mono", Consolas, monospace;
+        font-size: 0.79rem;
+        line-height: 1.75;
+        overflow-x: auto;
+        margin: 14px 0;
+      }
+      .tree .d {
+        color: #e8a87c;
+      }
+      .tree .cm {
+        color: #8b9a8f;
+      }
       footer {
-        margin-top: 60px;
+        margin-top: 64px;
         padding-top: 20px;
         border-top: 2px solid var(--ink);
         font-size: 0.85rem;
@@ -292,7 +390,8 @@
       @media print {
         body {
           background: #fff;
-          font-size: 10.5pt;
+          font-size: 10pt;
+          line-height: 1.55;
         }
         .wrap {
           max-width: 100%;
@@ -301,17 +400,30 @@
         .hero {
           margin: 0 0 6px;
         }
-        h2 {
+        h2,
+        h3 {
           page-break-after: avoid;
         }
         .card,
         .rule,
+        .note,
+        .warn,
         table,
-        .flow {
+        .flow,
+        .tree,
+        pre {
+          page-break-inside: avoid;
+        }
+        .part {
+          page-break-before: always;
           page-break-inside: avoid;
         }
         .noprint {
           display: none;
+        }
+        a {
+          color: var(--ink);
+          text-decoration: none;
         }
         @page {
           margin: 14mm;
@@ -339,79 +451,778 @@
       <div class="inner">
         <h1>The AI Operating System</h1>
         <div class="sub">
-          How one person runs a full digital agency — websites, video, ads,
-          automation, outreach — on top of Claude Code. The daily stack, the
-          rules, and the workflows, written for a friend who wants to copy it.
+          A complete beginner's guide to running real work on Claude Code — from
+          "I've never opened a terminal" to a system that remembers your
+          business, runs your workflows, and grades its own output before you
+          send it.
         </div>
         <div class="meta">
-          Practitioner guide &middot; v1.0 &middot; August 2026
+          Practitioner guide &middot; v2.0 &middot; August 2026 &middot; Written
+          for someone starting from zero
         </div>
       </div>
     </div>
 
     <div class="wrap">
       <p class="lede">
-        This isn't "10 AI tools you should try." It's the actual operating
-        system: how work gets decomposed, which agent does it, what gate it must
-        pass before it goes out, and the hard-won rules that stop expensive
-        mistakes from repeating. Everything here is generic — no client names,
-        no credentials, no private data.
+        Read this front to back once, then use it as a reference. Part 0 assumes
+        you know nothing — not the terminal, not git, not what a "model" is.
+        Parts 1–4 are the system itself, with every file you need written out in
+        full so you can copy and paste. Parts 5–9 are how it's used for real
+        client work. Part 10 is what to do when it breaks.
       </p>
+
+      <div class="note">
+        <b>How to use this guide</b> Don't try to build everything at once. Read
+        Part 0 and Part 1 today. Do the Day-1 exercise in Part 11. Then come
+        back for one more part per day. The system compounds — the value comes
+        from a week of small correct steps, not one heroic weekend.
+      </div>
 
       <div class="toc">
-        <a href="#one">1 — The Core Idea</a>
-        <a href="#two">2 — The Four Layers</a>
-        <a href="#three">3 — Memory: The Brain</a>
-        <a href="#four">4 — Skills: Frozen Procedures</a>
-        <a href="#five">5 — Subagents &amp; Parallelism</a>
-        <a href="#six">6 — The Daily Loop</a>
-        <a href="#seven">7 — Web &amp; Client Delivery</a>
-        <a href="#eight">8 — Video Production Pipeline</a>
-        <a href="#nine">9 — Content &amp; Distribution</a>
-        <a href="#ten">10 — Automation (n8n / VPS)</a>
-        <a href="#eleven">11 — Paid Ads Discipline</a>
-        <a href="#twelve">12 — Quality Gates</a>
-        <a href="#thirteen">13 — Hard Rules (Scar Tissue)</a>
-        <a href="#fourteen">14 — Machine &amp; Cost Discipline</a>
-        <a href="#fifteen">15 — Build Your Own in 7 Days</a>
+        <h4>Part 0 — Ground Floor (start here)</h4>
+        <div class="cols">
+          <a href="#s01">0.1 &nbsp;What Claude Code actually is</a>
+          <a href="#s02">0.2 &nbsp;The terminal, in 5 minutes</a>
+          <a href="#s03">0.3 &nbsp;Installing it</a>
+          <a href="#s04">0.4 &nbsp;Your first 20 minutes</a>
+          <a href="#s05">0.5 &nbsp;The permission model</a>
+          <a href="#s06">0.6 &nbsp;Glossary of every term</a>
+          <a href="#s07">0.7 &nbsp;Where every file lives</a>
+        </div>
+        <h4>Part 1 — The Idea</h4>
+        <div class="cols">
+          <a href="#s11">1.1 &nbsp;Chat box vs operating system</a>
+          <a href="#s12">1.2 &nbsp;The four layers</a>
+          <a href="#s13">1.3 &nbsp;Rules vs skills vs memory</a>
+        </div>
+        <h4>Part 2 — Building the System</h4>
+        <div class="cols">
+          <a href="#s21">2.1 &nbsp;The rules file (CLAUDE.md)</a>
+          <a href="#s22">2.2 &nbsp;Memory — the brain</a>
+          <a href="#s23">2.3 &nbsp;Skills — frozen procedures</a>
+          <a href="#s24">2.4 &nbsp;Slash commands</a>
+          <a href="#s25">2.5 &nbsp;Subagents</a>
+          <a href="#s26">2.6 &nbsp;Parallelism</a>
+          <a href="#s27">2.7 &nbsp;Hooks — automation</a>
+          <a href="#s28">2.8 &nbsp;MCP — connecting tools</a>
+        </div>
+        <h4>Part 3 — Running It Daily</h4>
+        <div class="cols">
+          <a href="#s31">3.1 &nbsp;The daily loop</a>
+          <a href="#s32">3.2 &nbsp;Working modes</a>
+          <a href="#s33">3.3 &nbsp;Context hygiene</a>
+        </div>
+        <h4>Part 4 — Quality</h4>
+        <div class="cols">
+          <a href="#s41">4.1 &nbsp;Quality gates</a>
+          <a href="#s42">4.2 &nbsp;The critic loop</a>
+          <a href="#s43">4.3 &nbsp;Green is not good</a>
+        </div>
+        <h4>Part 5–9 — Real Work</h4>
+        <div class="cols">
+          <a href="#s51">5 &nbsp;Web &amp; client delivery</a>
+          <a href="#s61">6 &nbsp;Video production</a>
+          <a href="#s71">7 &nbsp;Content &amp; distribution</a>
+          <a href="#s81">8 &nbsp;Automation (n8n / VPS)</a>
+          <a href="#s91">9 &nbsp;Paid ads discipline</a>
+        </div>
+        <h4>Part 10–12 — Hard Rules, Fixes, Start</h4>
+        <div class="cols">
+          <a href="#s101">10.1 &nbsp;Hard rules (scar tissue)</a>
+          <a href="#s102">10.2 &nbsp;Machine &amp; cost discipline</a>
+          <a href="#s103">10.3 &nbsp;Security hygiene</a>
+          <a href="#s111">11 &nbsp;Troubleshooting</a>
+          <a href="#s121">12 &nbsp;Build your own in 7 days</a>
+          <a href="#s131">13 &nbsp;One-page cheat sheet</a>
+        </div>
       </div>
 
-      <h2 id="one">1 — The Core Idea</h2>
+      <!-- ============ PART 0 ============ -->
+      <div class="part">
+        <div class="n">Part 0</div>
+        <h2>Ground Floor</h2>
+        <p>
+          Skip nothing here if you're new. Every later part assumes these seven
+          sections.
+        </p>
+      </div>
+
+      <h2 id="s01">0.1 — What Claude Code actually is</h2>
 
       <p>
-        Most people use AI as a <b>chat box</b>: ask, get text, paste somewhere,
-        forget. That caps out fast, because the model starts every conversation
-        with amnesia and no hands.
+        Claude Code is an AI assistant that runs <b>in your terminal</b> and can
+        <b>use your computer</b>. That second half is the whole point.
       </p>
 
       <p>
-        The shift is to treat AI as an <b>operating system for the business</b>.
-        Three things change:
+        A normal AI chat can only produce text. You then do the work: copy the
+        code, paste it into a file, save it, run it, read the error, paste the
+        error back. You are the hands.
       </p>
 
-      <div class="grid3">
-        <div class="card">
-          <h4>It remembers</h4>
-          <p class="small">
-            Durable facts live in files on disk, not in the chat. Every new
-            session loads the index automatically.
-          </p>
-        </div>
-        <div class="card">
-          <h4>It has hands</h4>
-          <p class="small">
-            Terminal, filesystem, git, browser, ffmpeg, APIs. It doesn't
-            describe the fix — it makes it and verifies it.
-          </p>
-        </div>
-        <div class="card">
-          <h4>It has procedures</h4>
-          <p class="small">
-            Repeated workflows are frozen into skills. You stop re-explaining
-            and start invoking.
-          </p>
-        </div>
+      <p>Claude Code has its own hands. It can:</p>
+      <ul>
+        <li>Read and write files on your disk</li>
+        <li>
+          Run commands (install packages, run tests, start servers, encode
+          video)
+        </li>
+        <li>Use git — commit, branch, open pull requests</li>
+        <li>Browse the web, call APIs, drive a headless browser</li>
+        <li>
+          Launch copies of itself to work on several things at the same time
+        </li>
+      </ul>
+
+      <p>
+        So instead of "here's the code for that fix," you get: it reads the
+        file, makes the change, runs the test, sees the test fail, reads the
+        error, fixes it again, re-runs, and tells you it passes. You review the
+        result rather than performing every step.
+      </p>
+
+      <div class="note">
+        <b>What it is not</b> It is not magic and it is not autonomous by
+        default. It asks permission before doing anything meaningful, it makes
+        mistakes, and it will confidently do the wrong thing if your
+        instructions are ambiguous. The system in this guide exists precisely to
+        constrain those failure modes.
       </div>
+
+      <h3>Where it runs</h3>
+      <p>
+        Same tool, several front doors: the terminal (the original and most
+        capable), a desktop app for Mac and Windows, a web app, and extensions
+        for VS Code and JetBrains editors. This guide assumes the terminal,
+        because everything else is a wrapper around it and the terminal is where
+        the full system works.
+      </p>
+
+      <h2 id="s02">0.2 — The terminal, in 5 minutes</h2>
+
+      <p>
+        The terminal (also called the command line, shell, console, or on
+        Windows, PowerShell / Command Prompt) is a text window where you type
+        commands instead of clicking. That's the entire concept.
+      </p>
+
+      <h3>Opening it</h3>
+      <table>
+        <tr>
+          <th style="width: 22%">System</th>
+          <th>How</th>
+        </tr>
+        <tr>
+          <td><b>Windows</b></td>
+          <td>
+            Press <kbd>Win</kbd>, type <code>PowerShell</code>, press Enter. (Or
+            install Windows Terminal from the Microsoft Store — nicer, same
+            thing.)
+          </td>
+        </tr>
+        <tr>
+          <td><b>macOS</b></td>
+          <td>
+            Press <kbd>Cmd</kbd>+<kbd>Space</kbd>, type <code>Terminal</code>,
+            press Enter.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Linux</b></td>
+          <td>Usually <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd>.</td>
+        </tr>
+      </table>
+
+      <h3>The six commands you actually need</h3>
+      <table>
+        <tr>
+          <th style="width: 24%">Command</th>
+          <th>What it does</th>
+        </tr>
+        <tr>
+          <td><code>pwd</code></td>
+          <td>Print working directory — "where am I right now"</td>
+        </tr>
+        <tr>
+          <td>
+            <code>ls</code>
+            <span class="small">(Windows: <code>dir</code> also works)</span>
+          </td>
+          <td>List the files here</td>
+        </tr>
+        <tr>
+          <td><code>cd foldername</code></td>
+          <td>Change directory — go into a folder</td>
+        </tr>
+        <tr>
+          <td><code>cd ..</code></td>
+          <td>Go up one folder</td>
+        </tr>
+        <tr>
+          <td><code>mkdir name</code></td>
+          <td>Make a new folder</td>
+        </tr>
+        <tr>
+          <td><code>claude</code></td>
+          <td>Start Claude Code in the current folder</td>
+        </tr>
+      </table>
+
+      <h3>The one concept that matters: the current folder</h3>
+      <p>
+        The terminal is always "standing in" one folder. Commands act on that
+        folder. When you start Claude Code,
+        <b>the folder you're standing in becomes its working directory</b> — the
+        project it can see and edit.
+      </p>
+
+      <div class="warn">
+        <b>Beginner mistake #1</b> Starting Claude Code from your home folder or
+        your desktop and then asking it to fix "the website." It has no idea
+        which website. <code>cd</code> into the project folder <em>first</em>,
+        then run <code>claude</code>.
+      </div>
+
+      <h3>Paths</h3>
+      <p>A path is a file's address. Two flavors:</p>
+      <ul>
+        <li>
+          <b>Absolute</b> — full address from the root.
+          <code>C:\Users\yourname\projects\site\index.html</code> on Windows,
+          <code>/Users/yourname/projects/site/index.html</code> on Mac.
+        </li>
+        <li>
+          <b>Relative</b> — from where you're standing. <code>index.html</code>,
+          or <code>../other-folder/file.txt</code>.
+        </li>
+      </ul>
+      <p>
+        The <code>~</code> character is shorthand for your home folder.
+        <code>~/.claude/</code> means "the <code>.claude</code> folder inside my
+        home folder." Folders starting with a dot are hidden by default in file
+        explorers — you'll need to enable "show hidden files" to see them.
+      </p>
+
+      <h2 id="s03" class="pb">0.3 — Installing it</h2>
+
+      <h3>Step 1 — Node.js</h3>
+      <p>
+        Claude Code installs through npm, which comes with Node.js. Check if you
+        already have it:
+      </p>
+      <pre><code>node --version</code></pre>
+      <p>
+        If you see a version number (v18 or higher), you're set. If you see
+        "command not found," download the LTS installer from
+        <code>nodejs.org</code>, run it, then close and reopen your terminal.
+      </p>
+
+      <h3>Step 2 — Install Claude Code</h3>
+      <pre><code>npm install -g @anthropic-ai/claude-code</code></pre>
+      <p class="small">
+        The <code>-g</code> means global — installed once for your whole
+        machine, not per-project. On Mac/Linux, if it complains about
+        permissions, do <em>not</em> reach for <code>sudo</code> as a first
+        move; fix your npm prefix instead (search "npm global install without
+        sudo") or use a version manager like nvm.
+      </p>
+
+      <h3>Step 3 — First run and login</h3>
+      <pre><code><span class="c"># make a folder to play in</span>
+mkdir ~/ai-sandbox
+cd ~/ai-sandbox
+claude</code></pre>
+      <p>
+        It opens a browser to log in with your Anthropic account. Approve, come
+        back to the terminal, and you're in. You'll see a prompt where you type
+        in plain English.
+      </p>
+
+      <h3>Step 4 — Confirm it works</h3>
+      <p>Type this and press Enter:</p>
+      <pre><code>Create a file called hello.txt containing the word "working", then show me the folder contents.</code></pre>
+      <p>
+        It will ask permission to write the file. Approve. If
+        <code>hello.txt</code> appears, the whole stack is functional.
+      </p>
+
+      <div class="note">
+        <b>Exiting and returning</b> <kbd>Ctrl</kbd>+<kbd>C</kbd> twice, or type
+        <code>/exit</code>, to quit. To resume your last conversation in that
+        folder, start it again with <code>claude --continue</code>. To pick from
+        previous sessions, <code>claude --resume</code>.
+      </div>
+
+      <h2 id="s04">0.4 — Your first 20 minutes</h2>
+
+      <p>Do these in order. Each teaches one thing you'll use forever.</p>
+
+      <h4>1. Ask it to look around (2 min)</h4>
+      <pre><code>What's in this folder? Give me a one-paragraph summary.</code></pre>
+      <p>
+        Teaches: it reads before it acts, and it summarizes rather than dumping.
+      </p>
+
+      <h4>2. Make it build something small (5 min)</h4>
+      <pre><code>Build a single-file HTML page that shows the current time,
+updating every second, on a dark background. Then open it
+in my browser so I can see it.</code></pre>
+      <p>
+        Teaches: it writes files <em>and</em> runs commands. Notice it verified
+        the result rather than just handing you code.
+      </p>
+
+      <h4>3. Break it on purpose, then ask for a fix (5 min)</h4>
+      <p>Open the file, delete a closing bracket, save. Then:</p>
+      <pre><code>The page is broken now. Find out why and fix it.</code></pre>
+      <p>Teaches: the debug loop. It reads, diagnoses, patches, re-checks.</p>
+
+      <h4>4. Use the built-in slash commands (3 min)</h4>
+      <table>
+        <tr>
+          <th style="width: 22%">Command</th>
+          <th>What it does</th>
+        </tr>
+        <tr>
+          <td><code>/help</code></td>
+          <td>
+            Lists everything available in your version —
+            <b>your source of truth</b>, since features change
+          </td>
+        </tr>
+        <tr>
+          <td><code>/clear</code></td>
+          <td>
+            Wipes the conversation. Use when switching to a different topic.
+          </td>
+        </tr>
+        <tr>
+          <td><code>/compact</code></td>
+          <td>
+            Summarizes the conversation so far to free up room. Use at
+            milestones.
+          </td>
+        </tr>
+        <tr>
+          <td><code>/memory</code></td>
+          <td>Lists and edits your memory/instruction files</td>
+        </tr>
+        <tr>
+          <td><code>/config</code></td>
+          <td>Settings — theme, model, and other preferences</td>
+        </tr>
+        <tr>
+          <td><code>/agents</code></td>
+          <td>Lists and manages your subagents</td>
+        </tr>
+        <tr>
+          <td><code>/mcp</code></td>
+          <td>Shows connected external tool servers</td>
+        </tr>
+      </table>
+
+      <h4>5. Learn the two magic prefixes (5 min)</h4>
+      <table>
+        <tr>
+          <th style="width: 16%">Prefix</th>
+          <th>Effect</th>
+        </tr>
+        <tr>
+          <td><code>!</code></td>
+          <td>
+            Runs the rest of the line as a shell command right in the session,
+            so its output lands in the conversation. <code>!git status</code>.
+            Essential for anything interactive that Claude can't do for you,
+            like a login prompt.
+          </td>
+        </tr>
+        <tr>
+          <td><code>#</code></td>
+          <td>
+            Saves what follows as a durable memory.
+            <code>#I deploy to Netlify, not Vercel</code>. It asks which memory
+            file to put it in.
+          </td>
+        </tr>
+      </table>
+
+      <div class="rule">
+        <b>Habit to build on day one</b> When it does something wrong, don't
+        just correct it in the moment — ask yourself "is this wrong permanently
+        or just this once?" If permanently, use <code>#</code> to save it. That
+        single habit is the difference between a tool that stays dumb and a
+        system that gets smarter every week.
+      </div>
+
+      <h2 id="s05" class="pb">0.5 — The permission model</h2>
+
+      <p>
+        Before Claude Code does anything with real consequences — writing a
+        file, running a command, hitting the network — it asks. You'll see a
+        prompt with options.
+      </p>
+
+      <table>
+        <tr>
+          <th style="width: 26%">Answer</th>
+          <th>Meaning</th>
+          <th>When</th>
+        </tr>
+        <tr>
+          <td><b>Yes</b></td>
+          <td>Allow this once</td>
+          <td>Default for anything unfamiliar</td>
+        </tr>
+        <tr>
+          <td><b>Yes, don't ask again</b></td>
+          <td>Allow this kind of action from now on in this project</td>
+          <td>
+            Safe repeated reads: <code>ls</code>, <code>git status</code>,
+            running tests
+          </td>
+        </tr>
+        <tr>
+          <td><b>No</b></td>
+          <td>Reject and explain why</td>
+          <td>Whenever it surprises you</td>
+        </tr>
+      </table>
+
+      <h3>Permission modes</h3>
+      <p>There's also a session-wide mode. The two you'll meet early:</p>
+      <ul>
+        <li>
+          <b>Default</b> — asks before consequential actions. Stay here while
+          learning.
+        </li>
+        <li>
+          <b>Plan mode</b> — press <kbd>Shift</kbd>+<kbd>Tab</kbd>. It
+          researches and proposes a plan but changes nothing until you approve.
+          This is the single most useful mode in the product and almost nobody
+          new uses it.
+        </li>
+      </ul>
+
+      <div class="rule">
+        <b>Use plan mode for anything that touches more than one file</b> Read
+        the plan, argue with it, approve it, <em>then</em> let it build. Two
+        benefits beyond safety: you catch a wrong approach before an hour is
+        wasted, and for client work the approved plan doubles as a written scope
+        agreement you can bill against.
+      </div>
+
+      <div class="warn">
+        <b>About "bypass permissions" mode</b> There is a mode that stops asking
+        entirely. It exists for experienced users running trusted, well-scoped
+        work in a directory they don't mind being changed. Don't touch it for at
+        least a month. When you do, use it in a git repo with everything
+        committed first, so any mistake is one <code>git checkout</code> away
+        from undone.
+      </div>
+
+      <h3>What to never allow blindly</h3>
+      <ul>
+        <li>
+          Anything deleting files in bulk (<code>rm -rf</code>, mass moves)
+        </li>
+        <li>
+          Anything sending outward — emails, posts, messages, deploys to
+          production
+        </li>
+        <li>
+          Anything spending money — ad budgets, paid API calls at volume,
+          purchases
+        </li>
+        <li>Anything touching credentials, keys, or auth configuration</li>
+      </ul>
+      <p>
+        These four categories should stay human-approved permanently, no matter
+        how experienced you get. Not because the AI is careless — because
+        they're irreversible and the cost of being wrong is asymmetric.
+      </p>
+
+      <h2 id="s06">0.6 — Glossary of every term</h2>
+
+      <p>Every word this guide uses, defined once.</p>
+
+      <table>
+        <tr>
+          <th style="width: 22%">Term</th>
+          <th>Meaning</th>
+        </tr>
+        <tr>
+          <td><b>Context / context window</b></td>
+          <td>
+            Everything the AI can currently "see" — your conversation, files it
+            read, instructions loaded. It's finite. When it fills up, older
+            material gets summarized or dropped. Most weird behavior traces back
+            to a stuffed or polluted context.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Token</b></td>
+          <td>
+            Roughly ¾ of a word. Both what you're billed in and what the context
+            is measured in. "Token discipline" means not wasting space and money
+            on things that don't help.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Model</b></td>
+          <td>
+            The specific AI brain doing the work. Bigger models reason better
+            and cost more. You match the model to the job.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Session</b></td>
+          <td>
+            One continuous conversation. Ends when you exit or
+            <code>/clear</code>.
+          </td>
+        </tr>
+        <tr>
+          <td><b>CLAUDE.md</b></td>
+          <td>
+            An instructions file loaded automatically at the start of every
+            session. Your standing rules.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Memory</b></td>
+          <td>
+            Markdown files storing durable facts, so knowledge survives between
+            sessions.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Skill</b></td>
+          <td>
+            A saved procedure — a file of steps for a repeated workflow, invoked
+            as <code>/name</code> or triggered automatically by matching
+            phrasing.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Slash command</b></td>
+          <td>
+            Anything you invoke by typing <code>/something</code>. Built-in ones
+            like <code>/clear</code>, plus your own.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Subagent</b></td>
+          <td>
+            A separate copy of the assistant with its own context and narrow
+            mission, launched to do one job and report back a summary.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Hook</b></td>
+          <td>
+            A script that runs automatically at a specific moment — session
+            start, before a tool runs, after an edit. This is how you get
+            behavior that fires without being asked.
+          </td>
+        </tr>
+        <tr>
+          <td><b>MCP</b></td>
+          <td>
+            Model Context Protocol — the standard way to plug external services
+            (your hosting, your CRM, your email) in as tools the AI can call.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Tool</b></td>
+          <td>
+            Any capability it can invoke: read a file, run a command, search the
+            web, call an MCP service.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Frontmatter</b></td>
+          <td>
+            The block at the top of a markdown file between
+            <code>---</code> lines, holding settings like name and description.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Repo / repository</b></td>
+          <td>A folder tracked by git, with full history of every change.</td>
+        </tr>
+        <tr>
+          <td><b>Commit</b></td>
+          <td>
+            A saved snapshot of your changes, with a message describing them.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Push</b></td>
+          <td>
+            Uploading your commits to a remote host like GitHub.
+            <b
+              >Committing is local; pushing is what makes it visible
+              elsewhere.</b
+            >
+          </td>
+        </tr>
+        <tr>
+          <td><b>Branch</b></td>
+          <td>
+            A parallel line of work, so you can build without disturbing the
+            main version.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Worktree</b></td>
+          <td>
+            A second folder checked out from the same repo, so two agents can
+            work simultaneously without colliding.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Gate</b></td>
+          <td>
+            A check that must pass before something ships. A real gate
+            <em>fails loudly</em>; something that just prints information is not
+            a gate.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Idempotent</b></td>
+          <td>
+            Safe to run more than once without doubling the effect. Critical for
+            anything that sends or publishes.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Fail-soft</b></td>
+          <td>
+            Code that swallows its own errors and continues silently.
+            Convenient, and the reason broken things look like working things.
+          </td>
+        </tr>
+        <tr>
+          <td><b>Headless</b></td>
+          <td>
+            Running without a visible window — a browser or app driven by
+            script.
+          </td>
+        </tr>
+        <tr>
+          <td><b>VPS</b></td>
+          <td>
+            Virtual Private Server. A small always-on computer you rent, where
+            scheduled automations live so they don't depend on your laptop being
+            awake.
+          </td>
+        </tr>
+      </table>
+
+      <h2 id="s07" class="pb">0.7 — Where every file lives</h2>
+
+      <p>
+        Two locations. <b>Global</b> applies everywhere; <b>project</b> applies
+        to one folder and its subfolders.
+      </p>
+
+      <h4>Global — your home folder</h4>
+      <div class="tree">
+        <span class="d">~/.claude/</span> ├── CLAUDE.md
+        <span class="cm"># standing rules, loaded every session</span> ├──
+        settings.json <span class="cm"># permissions, env vars, hooks</span> ├──
+        <span class="d">skills/</span> │ └── <span class="d">my-skill/</span> │
+        └── SKILL.md <span class="cm"># one folder per skill</span> ├──
+        <span class="d">agents/</span> │ └── researcher.md
+        <span class="cm"># one file per subagent</span> ├──
+        <span class="d">commands/</span> │ └── status.md
+        <span class="cm"># becomes /status</span> └──
+        <span class="d">projects/</span> └──
+        <span class="d">&lt;project-key&gt;/</span> └──
+        <span class="d">memory/</span> ├── MEMORY.md
+        <span class="cm"># the index — loaded every session</span> └──
+        some-fact.md <span class="cm"># one fact per file</span>
+      </div>
+
+      <h4>Project — inside a specific repo</h4>
+      <div class="tree">
+        <span class="d">your-project/</span> ├── CLAUDE.md
+        <span class="cm"># rules for THIS project only</span> └──
+        <span class="d">.claude/</span> ├── settings.json
+        <span class="cm"># shared with your team, commit this</span> ├──
+        settings.local.json<span class="cm"># yours only, gitignore this</span>
+        ├── <span class="d">skills/</span>
+        <span class="cm"># project-specific skills</span> ├──
+        <span class="d">agents/</span>
+        <span class="cm"># project-specific agents</span> └──
+        <span class="d">commands/</span>
+        <span class="cm"># project-specific commands</span>
+      </div>
+
+      <div class="note">
+        <b>Which wins</b> Project-level settings override global ones. A project
+        skill named the same as a global one takes precedence inside that
+        project. Put universal preferences in global; put anything about a
+        particular codebase in that codebase — and commit it, so anyone else
+        working there inherits it.
+      </div>
+
+      <p class="small">
+        Exact paths shift slightly between versions. Run <code>/memory</code> to
+        see exactly which files are loaded on your machine right now, rather
+        than trusting any document — including this one.
+      </p>
+
+      <!-- ============ PART 1 ============ -->
+      <div class="part">
+        <div class="n">Part 1</div>
+        <h2>The Idea</h2>
+        <p>Why a system beats a better prompt.</p>
+      </div>
+
+      <h2 id="s11">1.1 — Chat box vs operating system</h2>
+
+      <p>
+        Used as a chat box, AI hits a ceiling fast, for three specific reasons:
+      </p>
+
+      <table>
+        <tr>
+          <th style="width: 22%">Problem</th>
+          <th>What it looks like</th>
+          <th style="width: 30%">The fix</th>
+        </tr>
+        <tr>
+          <td><b>Amnesia</b></td>
+          <td>
+            Every session you re-explain your business, your stack, your
+            preferences, your constraints
+          </td>
+          <td>Memory files</td>
+        </tr>
+        <tr>
+          <td><b>Improvisation</b></td>
+          <td>
+            The same task done slightly differently each time; the gotcha you
+            hit last month gets hit again
+          </td>
+          <td>Skills</td>
+        </tr>
+        <tr>
+          <td><b>Queueing</b></td>
+          <td>
+            Four independent jobs done one after another, each waiting on the
+            last for no reason
+          </td>
+          <td>Subagents</td>
+        </tr>
+      </table>
+
+      <p>
+        Fix those three and the character of the tool changes. It stops being
+        something you operate and becomes something that runs.
+      </p>
 
       <div class="rule">
         <b>The governing principle</b> A prompt you have typed three times is a
@@ -419,102 +1230,246 @@
         system should get cheaper to operate every week, not more expensive.
       </div>
 
-      <h3>What "one-person agency" actually means here</h3>
+      <h3>What stays human</h3>
+      <p>Three things, permanently:</p>
+      <ol>
+        <li>
+          <b>Direction</b> — what to build, which client, what the business
+          needs this month
+        </li>
+        <li>
+          <b>Approval</b> — anything spending money or leaving the building
+        </li>
+        <li>
+          <b>Taste</b> — is this actually good? Machines verify correctness;
+          they don't have judgment about quality
+        </li>
+      </ol>
       <p>
-        Website builds, video editing, paid ads, cold outreach, client
-        reporting, and internal ops all run through one terminal. The human does
-        three things the machine can't: pick the direction, approve money and
-        outward-facing sends, and make taste calls. Everything between those
-        decisions is delegated.
+        Everything between those three is delegable. That's a much larger share
+        of the work than most people expect.
       </p>
 
-      <h2 id="two">2 — The Four Layers</h2>
+      <h2 id="s12">1.2 — The four layers</h2>
 
       <table>
         <tr>
-          <th style="width: 18%">Layer</th>
-          <th style="width: 26%">What it is</th>
-          <th>Why it exists</th>
-        </tr>
-        <tr>
-          <td><b>Memory</b></td>
-          <td>Markdown files on disk + a thin index loaded every session</td>
-          <td>
-            So the assistant knows the state of the business without being
-            re-briefed
-          </td>
+          <th style="width: 16%">Layer</th>
+          <th style="width: 28%">What it is</th>
+          <th>Solves</th>
         </tr>
         <tr>
           <td><b>Rules</b></td>
-          <td>
-            A global instruction file — facts that are <em>always</em> true
-          </td>
-          <td>
-            Non-negotiables: how to behave, what never to do, house standards
-          </td>
+          <td><code>CLAUDE.md</code> — always loaded</td>
+          <td>Behavioral consistency. Non-negotiables.</td>
+        </tr>
+        <tr>
+          <td><b>Memory</b></td>
+          <td>Markdown files + a thin index</td>
+          <td>Amnesia. State survives sessions.</td>
         </tr>
         <tr>
           <td><b>Skills</b></td>
-          <td>Versioned procedure files, invoked as <code>/name</code></td>
-          <td>
-            Repeatable multi-step workflows with their gotchas already baked in
-          </td>
+          <td>Procedure files, loaded on demand</td>
+          <td>Improvisation. Same job, same quality, every time.</td>
         </tr>
         <tr>
           <td><b>Agents</b></td>
-          <td>Specialist sub-assistants with their own context + tool set</td>
-          <td>
-            Parallelism and separation of concerns — a builder never grades
-            itself
-          </td>
+          <td>Sub-assistants with own context</td>
+          <td>Queueing, and self-review bias.</td>
         </tr>
       </table>
 
       <div class="flow">
-        <span class="step">Request</span><span class="arrow">→</span>
-        <span class="step">Memory loads state</span><span class="arrow">→</span>
+        <span class="step">You ask</span><span class="arrow">→</span>
+        <span class="step">Rules shape behavior</span
+        ><span class="arrow">→</span>
+        <span class="step">Memory supplies state</span
+        ><span class="arrow">→</span>
         <span class="step r">Skill supplies procedure</span
         ><span class="arrow">→</span>
         <span class="step r">Agents execute in parallel</span
+        ><span class="arrow">→</span> <span class="step g">Gate grades it</span
         ><span class="arrow">→</span>
-        <span class="step g">Gate grades output</span
-        ><span class="arrow">→</span>
-        <span class="step g">Out the door</span>
+        <span class="step g">You approve</span>
       </div>
 
-      <h4>The critical distinction</h4>
-      <p>
-        <b>Rules file = facts always true.</b> "Never freeze the machine during
-        a render." "Read code before modifying it."<br />
-        <b>Skill = a procedure you'd otherwise re-paste.</b> "Here are the 14
-        steps to turn a raw phone clip into a finished vertical video with
-        captions."
-      </p>
-      <p>
-        Getting this wrong is the most common failure. People dump procedures
-        into the always-loaded rules file, it balloons to thousands of tokens,
-        and every single session pays for instructions it doesn't need.
-      </p>
-
-      <h2 id="three">3 — Memory: The Brain</h2>
+      <h2 id="s13">1.3 — Rules vs skills vs memory</h2>
 
       <p>
-        Memory is a folder of small markdown files. One fact per file. Each file
-        has a name, a one-line description, and a type. A single
-        <code>MEMORY.md</code> index — one line per memory — is the only thing
-        loaded at session start.
+        Getting this wrong is the single most common beginner mistake, and it's
+        expensive because it's invisible.
       </p>
 
-      <h3>Four memory types</h3>
+      <table>
+        <tr>
+          <th style="width: 14%">Type</th>
+          <th style="width: 26%">Contains</th>
+          <th style="width: 22%">Loaded</th>
+          <th>Cost</th>
+        </tr>
+        <tr>
+          <td><b>Rule</b></td>
+          <td>A fact always true. "Never post without my approval."</td>
+          <td>Every session, always</td>
+          <td>Paid on every session forever</td>
+        </tr>
+        <tr>
+          <td><b>Memory</b></td>
+          <td>A fact about your world. "The staging site is at X."</td>
+          <td>Index always; detail on demand</td>
+          <td>Cheap — index is one line</td>
+        </tr>
+        <tr>
+          <td><b>Skill</b></td>
+          <td>A procedure. "The 14 steps to publish a video."</td>
+          <td>Only when relevant</td>
+          <td>Free until used</td>
+        </tr>
+      </table>
+
+      <div class="warn">
+        <b>The failure mode</b> Someone discovers <code>CLAUDE.md</code>, loves
+        it, and pours everything in — their whole video workflow, their whole
+        deploy checklist, their client list. Six weeks later it's 3,000 lines.
+        Every single session now burns thousands of tokens loading instructions
+        that are irrelevant to 95% of what they do, and the genuinely important
+        rules are buried where they get less attention.<br /><br />
+        <b>Test:</b> if a line wouldn't matter to a session about a completely
+        unrelated topic, it does not belong in <code>CLAUDE.md</code>. Move it
+        to a skill.
+      </div>
+
+      <!-- ============ PART 2 ============ -->
+      <div class="part">
+        <div class="n">Part 2</div>
+        <h2>Building the System</h2>
+        <p>Every file written out in full. Copy, paste, adjust.</p>
+      </div>
+
+      <h2 id="s21">2.1 — The rules file (CLAUDE.md)</h2>
+
+      <p>
+        A plain markdown file at <code>~/.claude/CLAUDE.md</code> (global) or
+        <code>./CLAUDE.md</code> (project). Loaded at the start of every
+        session. Keep it short.
+      </p>
+
+      <h3>A complete starter file</h3>
+      <pre><code><span class="c"># Execution Rules</span>
+
+<span class="c">## Quality</span>
+- Read code before modifying it. Verify prior work; never assume it's correct.
+- Flag hidden assumptions and goal misalignment BEFORE building.
+- Test everything testable. Run the code. Don't guess.
+- Don't patch weak work — rebuild it properly.
+
+<span class="c">## Execution</span>
+- Decompose tasks into independent sub-tasks and run them in parallel.
+  Sequential is the exception, not the default.
+- Before any multi-file change, use plan mode. Get the plan approved first.
+- If I've asked for the same thing twice, suggest turning it into a skill.
+
+<span class="c">## Communication</span>
+- Be direct. No filler, no preamble, no trailing summary unless I ask.
+- If tests fail, say so and show the output. Never report success you
+  haven't verified.
+- When you're uncertain, say which part you're uncertain about.
+
+<span class="c">## Never without asking</span>
+- Send anything outward: email, post, message, deploy to production
+- Spend money
+- Delete files in bulk
+- Change credentials or auth config
+</code></pre>
+
+      <p>
+        That's the whole thing. Around 20 lines. Add to it only when you catch
+        yourself giving the same correction twice — and only if it's genuinely
+        universal.
+      </p>
+
+      <h3>Project-level rules</h3>
+      <p>
+        Inside a specific codebase, a <code>CLAUDE.md</code> there carries
+        what's true about <em>that</em> project:
+      </p>
+      <pre><code><span class="c"># Project: acme-site</span>
+
+<span class="c">## Stack</span>
+- Astro + Tailwind. Content in `src/content/`. No React in this repo.
+
+<span class="c">## Commands</span>
+- Dev: `npm run dev` · Build: `npm run build` · Test: `npm test`
+
+<span class="c">## Conventions</span>
+- Components are PascalCase. Utilities are camelCase.
+- Never edit `dist/` — it's generated.
+
+<span class="c">## Deploy</span>
+- Pushing to `main` triggers the build automatically.
+- Cache must be purged after deploy or the old version stays live.
+</code></pre>
+
+      <div class="rule">
+        <b>Commit your project CLAUDE.md</b> It's part of the codebase. Anyone
+        else who works there — human or AI — inherits the conventions instead of
+        guessing at them. This is the cheapest onboarding document you will ever
+        write.
+      </div>
+
+      <h2 id="s22" class="pb">2.2 — Memory: the brain</h2>
+
+      <p>
+        A folder of small markdown files. <b>One fact per file.</b> Plus one
+        index file that's the only thing loaded at session start.
+      </p>
+
+      <h3>What a memory file looks like</h3>
+      <pre><code>---
+name: deploy-needs-cache-purge
+description: Deploys don't go live until the CDN cache is purged
+metadata:
+  type: feedback
+---
+
+Pushing to main builds and uploads, but the CDN keeps serving the old
+version until the cache is purged. The site looks unchanged and there
+is no error anywhere.
+
+**Why:** I lost 40 minutes debugging a "broken" deploy that had
+actually succeeded. Nothing in the logs indicates this.
+
+**How to apply:** After any deploy, purge the cache, then fetch the
+live URL and confirm the new content is actually being served.
+Related: [[committed-is-not-deployed]]
+</code></pre>
+
+      <h3>The index</h3>
+      <p>
+        <code>MEMORY.md</code> holds one line per memory. Never content — just a
+        pointer and a hook:
+      </p>
+      <pre><code><span class="c"># MEMORY</span>
+
+<span class="c">## Rules learned</span>
+- [deploy-needs-cache-purge](deploy-needs-cache-purge.md) — deploy succeeds, site unchanged
+- [committed-is-not-deployed](committed-is-not-deployed.md) — a commit proves nothing about prod
+
+<span class="c">## Projects</span>
+- [acme-site](acme-site.md) — redesign, launch Sept, blocked on client logo
+</code></pre>
+
+      <h3>The four types</h3>
       <table>
         <tr>
           <th style="width: 16%">Type</th>
           <th>Contents</th>
-          <th style="width: 34%">Example shape</th>
+          <th style="width: 34%">Example</th>
         </tr>
         <tr>
           <td><span class="pill b">user</span></td>
-          <td>Who the operator is: role, expertise, standing preferences</td>
+          <td>Who you are: role, expertise, standing preferences</td>
           <td>"Prefers deliverables as self-contained HTML, not markdown"</td>
         </tr>
         <tr>
@@ -522,29 +1477,21 @@
           <td>
             Corrections and confirmed approaches — <em>always with the why</em>
           </td>
-          <td>
-            "A commit proves nothing about production. Check the live
-            environment."
-          </td>
+          <td>"A commit proves nothing about production"</td>
         </tr>
         <tr>
           <td><span class="pill g">project</span></td>
-          <td>Ongoing work, goals, constraints not derivable from the code</td>
-          <td>
-            "Build X is blocked pending a design decision from the client"
-          </td>
+          <td>Ongoing work, goals, constraints not derivable from code</td>
+          <td>"Build X blocked pending a client design decision"</td>
         </tr>
         <tr>
           <td><span class="pill b">reference</span></td>
           <td>Pointers: dashboards, tickets, docs, environment facts</td>
-          <td>
-            "The render library lives at <code>_lib/</code> and exposes these
-            helpers"
-          </td>
+          <td>"Render helpers live in <code>_lib/</code>"</td>
         </tr>
       </table>
 
-      <h3>The rules that keep memory useful</h3>
+      <h3>Rules that keep memory useful</h3>
       <ul>
         <li>
           <b>One fact per file.</b> Bundled files never get updated correctly
@@ -552,70 +1499,102 @@
         </li>
         <li>
           <b>Never store what the repo already records.</b> Code structure, past
-          fixes, git history — the machine can read those. Memory is for what
-          <em>isn't</em> written down.
+          fixes, git history — it can read those. Memory is for what
+          <em>isn't</em> written down anywhere.
         </li>
         <li>
-          <b>Convert relative dates to absolute.</b> "Next week" is meaningless
-          three months later.
+          <b>Absolute dates only.</b> "Next week" is meaningless three months
+          later.
         </li>
         <li>
-          <b>Link liberally</b> with wiki-style links. A link to a memory that
-          doesn't exist yet is a to-do, not an error.
+          <b>Link liberally</b> with <code>[[double brackets]]</code>. A link to
+          a memory that doesn't exist yet is a to-do, not an error.
         </li>
         <li>
           <b>Delete wrong memories immediately.</b> A stale fact is worse than a
           missing one, because it's trusted.
         </li>
+        <li>
+          <b>Verify before acting on one.</b> If a memory names a file or a
+          flag, check it still exists. Memories record what was true when
+          written.
+        </li>
       </ul>
 
       <div class="rule">
-        <b>The highest-leverage memory type is <em>feedback</em></b> Every time
-        the system makes an expensive mistake, the fix is not "be more careful
-        next time" — it's a feedback memory with the trigger, the failure mode,
-        and the why. That mistake then structurally cannot recur. This is the
-        compounding mechanism of the entire system.
+        <b>Feedback is the highest-leverage type</b> When the system makes an
+        expensive mistake, the fix is not "be more careful" — it's a feedback
+        memory carrying the trigger, the failure mode, and the why. That mistake
+        then structurally cannot recur. This is the compounding mechanism of the
+        entire system. Everything else is scaffolding around it.
       </div>
 
       <h3>Checkpoints</h3>
       <p>
-        At the end of a working session, state gets written to a dated
-        checkpoint file: what got done, what's blocked, what's next. Tomorrow's
-        session opens with yesterday's ending. No re-briefing, no "where were
-        we."
+        At the end of a working session, write state to a dated file: what got
+        done, what's blocked, what's next. Tomorrow opens with yesterday's
+        ending. No re-briefing, no "where were we." You can automate this with a
+        hook (§2.7).
       </p>
 
-      <h2 id="four" class="pb">4 — Skills: Frozen Procedures</h2>
+      <h2 id="s23" class="pb">2.3 — Skills: frozen procedures</h2>
 
       <p>
-        A skill is a markdown file with frontmatter (name, description, trigger
-        phrases) and a body (the steps). When a request matches the description,
-        it loads automatically. You can also invoke it directly with
+        A skill lives at <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code>.
+        Frontmatter on top, steps below. It loads automatically when a request
+        matches the description, or you invoke it directly with
         <code>/name</code>.
       </p>
 
-      <h3>Anatomy of a good skill</h3>
+      <h3>A complete working skill</h3>
       <pre><code>---
-name: finish-video
-description: Turn a finished cut into per-platform outputs.
-  Trigger on "finish this video", "wrap the reel", "/finish-video",
-  or when a final master exists and needs distribution assets.
+name: new-client-site
+description: Scaffold a new client website project from scratch.
+  Trigger on "new client site", "start a site for", "/new-client-site",
+  or when the user pastes a client brief asking for a website.
 ---
 
-## Preconditions
-- Master file exists and passed the render gate
-- Captions verified against the RENDERED file, not the source
+<span class="c"># New Client Site</span>
 
-## Steps
-1. Probe the master (codec, resolution, audio rate) and ASSERT, don't print
-2. Run the copyright gate on the audio bed
-3. Generate per-platform captions from the copy template
-4. Build the schedule payload
-5. Hand to the human for the final send
+<span class="c">## Preconditions</span>
+- Client name and the niche are known
+- Deploy target is known (ask if not — see Gotchas)
 
-## Gotchas
-- Audio normalization can silently resample; force the output rate
-- A "success" exit code from the encoder is not proof of a valid file
+<span class="c">## Steps</span>
+
+1. **Ask the five scoping questions** (all at once, not one at a time):
+   - What does a successful visitor DO on this site?
+   - Do you have brand assets, or am I creating them?
+   - Who writes the copy?
+   - Where does it get hosted?
+   - What's the launch date?
+
+2. **Research** — spawn a research subagent to look at three
+   competitors in the niche. Return: positioning, what they all do
+   the same (the category convention), and one gap.
+
+3. **Scaffold** — create the folder, initialize git, set up the
+   framework, commit the empty skeleton BEFORE writing any content.
+
+4. **Design tokens first** — colors, type scale, spacing, in one
+   file. Everything else references those. Never hardcode a hex.
+
+5. **Build the page**, then run the pre-ship audit skill.
+
+6. **Deploy to a staging URL**, fetch it back, and confirm what's
+   live matches what you built.
+
+<span class="c">## Gotchas</span>
+- ASK the deploy target at step 1. Different hosts need completely
+  different handoffs, and discovering that at the end costs an hour.
+- Never put fake testimonials or invented metrics in a demo. If the
+  design needs placeholder proof, label it as illustrative ABOVE
+  the fold, not in a footer.
+- The client's logo will be a low-res JPEG. Ask for vector at step 1.
+
+<span class="c">## Done when</span>
+- Staging URL loads, audit passes, and the client has been sent a
+  link with the five questions answered back to them.
 </code></pre>
 
       <h3>What separates a skill that fires from one that never does</h3>
@@ -624,12 +1603,12 @@ description: Turn a finished cut into per-platform outputs.
           <h4>Strong triggers</h4>
           <p class="small">
             The description must contain the literal phrases a human would
-            actually type. Vague descriptions never auto-invoke, and an
-            uninvoked skill is dead weight.
+            actually type. "Handles website creation workflows" never fires.
+            "Trigger on 'new client site', 'build me a site for'" fires.
           </p>
         </div>
         <div class="card">
-          <h4>Gotchas section</h4>
+          <h4>A gotchas section</h4>
           <p class="small">
             This is the entire value. Anyone can write the happy path. The skill
             earns its keep by carrying the six things that went wrong the first
@@ -639,197 +1618,443 @@ description: Turn a finished cut into per-platform outputs.
         <div class="card">
           <h4>Runnable steps</h4>
           <p class="small">
-            Real commands with real paths, not "then process the file." If a
+            Real commands with real paths, not "then process the file." Where a
             step needs a human decision, say so explicitly.
           </p>
         </div>
         <div class="card">
-          <h4>Preconditions</h4>
+          <h4>Preconditions and done-when</h4>
           <p class="small">
-            State what must be true before step 1. Half of all skill failures
-            are a missing input nobody checked for.
+            What must be true before step 1, and how you know it's finished.
+            Half of all skill failures are a missing input nobody checked for.
           </p>
         </div>
       </div>
 
-      <h3>Categories in daily use</h3>
+      <h3>Testing whether your skill actually fires</h3>
+      <p>
+        Write it, start a fresh session, and type the phrase a normal person
+        would use — <em>not</em> the skill's name. If it doesn't load, your
+        description is too vague. Add the literal trigger phrases. Repeat until
+        it fires without being named.
+      </p>
+
+      <div class="note">
+        <b>Let the tool write the skill</b> The fastest way to build one: do the
+        workflow by hand once with Claude Code, and when it's done say
+        <em>"turn what we just did into a skill."</em> It has the whole thing in
+        context — including every wrong turn — and will write a better gotchas
+        section than you'd write from memory a week later.
+      </div>
+
+      <h3>When to build one</h3>
+      <p>
+        After the second time. The first time, you're learning the workflow. The
+        second time, you notice you're repeating yourself — that's the signal.
+        Waiting for the fifth time means three sessions of re-explaining you
+        didn't need to pay for.
+      </p>
+
+      <h2 id="s24" class="pb">2.4 — Slash commands</h2>
+
+      <p>
+        A shortcut for a prompt you type often. Any file at
+        <code>~/.claude/commands/name.md</code> becomes <code>/name</code>.
+      </p>
+
+      <pre><code><span class="c"># ~/.claude/commands/status.md</span>
+
+Give me a snapshot, in this exact order:
+
+1. What did I ship yesterday? (check git log across my project folders)
+2. What's blocked and waiting on ME specifically?
+3. What's the single highest-value thing to do next, and why that one?
+
+Keep it under 200 words. No preamble.
+</code></pre>
+
+      <p>
+        Now <code>/status</code> runs that. Trivial to build, and once you have
+        five of them the daily overhead of the system drops to near zero.
+      </p>
+
       <table>
         <tr>
-          <th style="width: 22%">Category</th>
-          <th>What it covers</th>
+          <th style="width: 22%">Command vs Skill</th>
+          <th>Use which</th>
         </tr>
         <tr>
-          <td><b>Build</b></td>
-          <td>
-            Site scaffolds, design systems, deploy chains, client onboarding,
-            repo QA
-          </td>
+          <td><b>Command</b></td>
+          <td>A prompt you retype. Short, you invoke it deliberately.</td>
         </tr>
         <tr>
-          <td><b>Video</b></td>
+          <td><b>Skill</b></td>
           <td>
-            Cut, caption, grade, overlay, thumbnail, copyright check, ship gate,
-            distribution
-          </td>
-        </tr>
-        <tr>
-          <td><b>Content</b></td>
-          <td>
-            Post packs, carousels, long-form scripts, humanizer pass, scheduling
-          </td>
-        </tr>
-        <tr>
-          <td><b>Ads</b></td>
-          <td>
-            Plan, launch, monitor, fatigue detection, budget reallocation, kill
-            rules
-          </td>
-        </tr>
-        <tr>
-          <td><b>Ops</b></td>
-          <td>
-            Daily brief, realign/prioritize, machine audit, storage audit,
-            checkpoint
-          </td>
-        </tr>
-        <tr>
-          <td><b>Meta</b></td>
-          <td>
-            Skill-builder (build new skills), critic-loop (grade anything),
-            council (multi-model)
+            A multi-step procedure with gotchas. Long, and you want it to load
+            automatically when relevant.
           </td>
         </tr>
       </table>
 
-      <p class="small">
-        The count matters less than the discipline: every skill exists because a
-        workflow was performed by hand at least twice and hurt the second time.
-      </p>
-
-      <h2 id="five">5 — Subagents &amp; Parallelism</h2>
+      <h2 id="s25">2.5 — Subagents</h2>
 
       <p>
-        A subagent is a separate assistant instance with its own context window,
-        its own tool permissions, and a narrow mission. It reports back a
-        synthesis — not a dump of everything it read.
+        A subagent is a separate instance with its own context window, its own
+        tool permissions, and one narrow mission. It reports back a synthesis —
+        not a dump of everything it read.
       </p>
 
-      <h3>Why this is the single biggest speed unlock</h3>
-      <p>
-        Sequential work is the default and it's almost always wrong. If four
-        sub-tasks have no dependencies between them, they should run at the same
-        time. Four 30-minute tasks become 30 minutes of wall-clock, not two
-        hours.
-      </p>
-
-      <div class="flow">
-        <span class="step">Decompose task</span><span class="arrow">→</span>
-        <span class="step r">Agent A</span> <span class="step r">Agent B</span>
-        <span class="step r">Agent C</span> <span class="step r">Agent D</span>
-        <span class="arrow">→</span><span class="step g">Merge + gate</span>
-        <div class="small" style="margin-top: 10px">
-          All four launched in ONE message. Launched one-by-one, they run
-          sequentially and you lose the entire benefit.
-        </div>
-      </div>
-
-      <h3>Elite briefs, not baby prompts</h3>
-      <p>
-        The quality of a subagent's output is almost entirely determined by the
-        brief. A thin brief ("look into the auth thing") returns thin work. A
-        full brief has six parts:
-      </p>
+      <h3>Two reasons they matter</h3>
       <ol>
         <li>
-          <b>Mission + done-definition</b> — what "finished" concretely looks
-          like
+          <b>Context isolation.</b> A research agent might read forty pages. If
+          that happened in your main session, it would crowd out everything
+          else. In a subagent, forty pages go in and one paragraph comes back.
         </li>
         <li>
-          <b>Full context handoff</b> — the agent can't see your conversation;
-          give it everything
-        </li>
-        <li>
-          <b>Autonomy mandate</b> — explicitly authorize it to make decisions
-          without checking back
-        </li>
-        <li><b>Quality bar</b> — what standard it's being held to</li>
-        <li>
-          <b>Right specialist</b> — a security auditor, not a generalist, for a
-          security sweep
-        </li>
-        <li>
-          <b>Return contract</b> — "return a synthesis, decisions made, and
-          artifact paths — not file contents"
+          <b>Independence.</b> An agent that didn't build the thing can review
+          it honestly. The builder can't.
         </li>
       </ol>
 
-      <h3>Specialist roster (generic pattern)</h3>
+      <h3>Defining one</h3>
+      <p>A file at <code>~/.claude/agents/researcher.md</code>:</p>
+      <pre><code>---
+name: researcher
+description: Deep multi-source web research in an isolated context.
+  Use for competitive analysis or any investigation that would
+  otherwise flood the main conversation. Returns concise synthesis,
+  never raw dumps.
+tools: WebSearch, WebFetch, Read, Grep, Glob
+---
+
+You are a research specialist. Your job is to investigate thoroughly
+and return a TIGHT synthesis.
+
+Rules:
+- Read widely, report narrowly. Never paste large excerpts back.
+- Separate what you VERIFIED from what you INFERRED. Label both.
+- Give sources for every factual claim.
+- If sources disagree, say so and say which you trust and why.
+- If you couldn't find something, say that explicitly. Do not fill
+  a gap with a plausible guess.
+
+Return format:
+1. Answer (3-5 sentences)
+2. Key findings (bulleted, sourced)
+3. What's uncertain or contested
+4. Sources
+</code></pre>
+
+      <p>
+        The <code>tools:</code> line is a permission boundary — this agent can
+        read and search but cannot write files or run commands. For anything
+        that only needs to look, restrict it. A read-only agent cannot damage
+        anything.
+      </p>
+
+      <h3>The brief is everything</h3>
+      <p>
+        A subagent cannot see your conversation. It knows only what you put in
+        the brief. A thin brief returns thin work. A full brief has six parts:
+      </p>
+
+      <pre><code>MISSION: Audit the checkout flow for bugs that would cost a sale.
+DONE WHEN: Every step from cart to confirmation is exercised and
+  every failure is reported with exact repro steps.
+
+CONTEXT: Next.js app in ./src. Payments via Stripe test mode. The
+  client reported "sometimes it just spins" — never reproduced.
+  Existing tests are in ./tests but cover happy path only.
+
+AUTONOMY: Make your own calls on how to test. Don't check in for
+  approval. Run the dev server, drive the browser, break things.
+
+QUALITY BAR: A bug is only real if you reproduced it twice and can
+  state the exact inputs. Speculation is not a finding.
+
+RETURN: A list of confirmed bugs, each with file:line, repro steps,
+  and severity. Plus one line on what you tested and found FINE —
+  I need to know the coverage, not just the failures.
+  Do NOT paste file contents back.
+</code></pre>
+
+      <div class="rule">
+        <b>The most common subagent failure is a lazy brief</b> "Check the
+        checkout" gets you a vague paragraph. The brief above gets you a bug
+        list you can act on. Writing the brief takes ninety seconds and is the
+        entire difference.
+      </div>
+
+      <h3>A useful specialist roster</h3>
       <table>
         <tr>
-          <th style="width: 26%">Agent</th>
+          <th style="width: 24%">Agent</th>
           <th>Mission</th>
+          <th style="width: 16%">Access</th>
         </tr>
         <tr>
           <td><b>Researcher</b></td>
-          <td>
-            Multi-source web research in an isolated context, returns synthesis
-            only. Keeps 40 pages of scraped text out of the main conversation.
-          </td>
+          <td>Multi-source investigation, isolated context, synthesis only</td>
+          <td>Read-only</td>
         </tr>
         <tr>
           <td><b>Explorer</b></td>
-          <td>
-            Read-only fan-out search across a large codebase. Locates things;
-            doesn't judge them.
-          </td>
+          <td>Fan-out search across a big codebase. Locates; doesn't judge.</td>
+          <td>Read-only</td>
         </tr>
         <tr>
-          <td><b>Builder specialists</b></td>
+          <td><b>Builders</b></td>
           <td>
-            Framework-specific implementers — a WordPress builder, a frontend
-            builder, a TypeScript specialist.
+            Framework specialists — frontend, WordPress, TypeScript, whatever
+            you use
           </td>
+          <td>Read + write</td>
         </tr>
         <tr>
           <td><b>Auditors</b></td>
-          <td>
-            Security sweep, site pre-ship audit, content/copy QA. All read-only
-            by design.
-          </td>
+          <td>Security sweep, pre-ship site audit, copy QA</td>
+          <td>Read-only, by design</td>
         </tr>
         <tr>
-          <td><b>Planner / executive</b></td>
+          <td><b>Planner</b></td>
           <td>
-            Decomposes a fuzzy goal into a routed, prioritized execution plan.
-            Plans only — never builds, never spawns.
+            Turns a fuzzy goal into a routed, prioritized plan. Plans only.
           </td>
+          <td>Read-only</td>
         </tr>
         <tr>
           <td><b>Curator</b></td>
-          <td>
-            Keeps the memory vault clean: orphans, stale entries, broken links.
-          </td>
+          <td>Keeps memory clean: orphans, stale entries, broken links</td>
+          <td>Read + write to memory</td>
         </tr>
       </table>
 
       <div class="rule">
         <b>An agent never grades its own work</b> The builder is invested in the
-        build. Grading always goes to a fresh-context agent that didn't write
-        the thing, ideally one instructed to default to FAIL on uncertainty.
-        This single rule catches more defects than any other practice in the
-        system.
+        build. Grading goes to a fresh-context agent that didn't write the
+        thing, ideally instructed to default to FAIL on uncertainty. This single
+        rule catches more defects than any other practice in the system.
       </div>
 
-      <h3>Worktree isolation</h3>
+      <h2 id="s26" class="pb">2.6 — Parallelism</h2>
+
       <p>
-        When multiple agents edit files in parallel, they collide. The fix is
-        git worktrees: each agent gets its own isolated checkout, does its work,
-        opens its own change. Merge smallest-first so later rebases stay
-        trivial. Blast radius per agent is one worktree; a crashed agent doesn't
-        take down the other three.
+        Sequential is the default and it's usually wrong. If four sub-tasks
+        don't depend on each other, they should run at the same time.
       </p>
 
-      <h2 id="six" class="pb">6 — The Daily Loop</h2>
+      <div class="flow">
+        <span class="step">Decompose</span><span class="arrow">→</span>
+        <span class="step r">Agent A</span> <span class="step r">Agent B</span>
+        <span class="step r">Agent C</span> <span class="step r">Agent D</span>
+        <span class="arrow">→</span><span class="step g">Merge + gate</span>
+        <div class="small" style="margin-top: 10px">
+          All four launched in ONE message. Launched one at a time, they run
+          sequentially and the benefit vanishes.
+        </div>
+      </div>
+
+      <h3>How to actually trigger it</h3>
+      <p>Ask for it explicitly until it's habitual:</p>
+      <pre><code>These four things don't depend on each other. Launch all four
+subagents in parallel in a single message, then merge the results:
+
+1. Audit the CSS for unused rules
+2. Check every external link resolves
+3. Review the copy for AI tells and unverifiable claims
+4. Scan dependencies for known vulnerabilities
+</code></pre>
+
+      <h3>The dependency test</h3>
+      <p>
+        Before any multi-part task, ask:
+        <b>does task B need task A's output?</b>
+      </p>
+      <ul>
+        <li><b>No</b> → parallel. Almost always the answer.</li>
+        <li>
+          <b>Yes</b> → sequential, but only for the pair that's actually linked.
+          Everything else still runs alongside.
+        </li>
+      </ul>
+
+      <h3>When agents edit files simultaneously</h3>
+      <p>
+        They collide. The fix is git worktrees: each agent gets its own isolated
+        checkout of the repo, does its work, opens its own change. Merge
+        smallest-first so later rebases stay trivial. Blast radius per agent is
+        one worktree; a crashed agent doesn't take down the other three.
+      </p>
+
+      <div class="warn">
+        <b>Don't over-parallelize</b> Ten agents on a four-part task means ten
+        agents duplicating work and ten sets of results to reconcile.
+        Parallelism pays when tasks are genuinely independent and genuinely
+        substantial. For three quick edits, one agent doing them in order is
+        faster than the coordination overhead.
+      </div>
+
+      <h2 id="s27">2.7 — Hooks: making things happen automatically</h2>
+
+      <p>
+        A hook is a command that runs automatically at a defined moment. This is
+        how you get behavior that fires whether or not you remember to ask.
+      </p>
+
+      <h3>The events</h3>
+      <table>
+        <tr>
+          <th style="width: 24%">Event</th>
+          <th>Fires</th>
+          <th>Good for</th>
+        </tr>
+        <tr>
+          <td><code>SessionStart</code></td>
+          <td>When a session begins</td>
+          <td>Injecting today's priorities, current branch, open tasks</td>
+        </tr>
+        <tr>
+          <td><code>UserPromptSubmit</code></td>
+          <td>Each time you send a message</td>
+          <td>Adding standing context, enforcing a mode</td>
+        </tr>
+        <tr>
+          <td><code>PreToolUse</code></td>
+          <td>Before a tool runs</td>
+          <td>Blocking dangerous commands, requiring a gate to have passed</td>
+        </tr>
+        <tr>
+          <td><code>PostToolUse</code></td>
+          <td>After a tool runs</td>
+          <td>Auto-formatting after every edit, running a linter</td>
+        </tr>
+        <tr>
+          <td><code>Stop</code></td>
+          <td>When it finishes responding</td>
+          <td>Notifications, logging</td>
+        </tr>
+        <tr>
+          <td><code>SessionEnd</code></td>
+          <td>When a session closes</td>
+          <td>Writing the checkpoint</td>
+        </tr>
+      </table>
+
+      <h3>A real example — auto-format after every edit</h3>
+      <p>In <code>~/.claude/settings.json</code>:</p>
+      <pre><code>{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write \"$CLAUDE_FILE_PATHS\""
+          }
+        ]
+      }
+    ]
+  }
+}
+</code></pre>
+
+      <h3>The highest-value hook: SessionStart</h3>
+      <p>
+        Have it print today's priorities so every session opens already
+        oriented:
+      </p>
+      <pre><code>{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat ~/notes/today.md"
+          }
+        ]
+      }
+    ]
+  }
+}
+</code></pre>
+      <p>
+        Whatever that command prints gets injected into the session as context.
+        Point it at a file, or a script that assembles priorities, git status,
+        and anything awaiting a reply. This one hook is what makes the system
+        feel like a system rather than a collection of files.
+      </p>
+
+      <div class="note">
+        <b>Ask it to write your hooks</b> Hook configuration is fiddly and
+        version-specific. Rather than hand-editing JSON, describe what you want
+        —
+        <em>"every time you finish editing a Python file, run black on it"</em>
+        — and let Claude Code write and install the config. It knows the current
+        schema; a guide written months ago might not.
+      </div>
+
+      <div class="warn">
+        <b>Hooks run real commands with your permissions</b> A hook is not
+        sandboxed. Never paste a hook config you don't understand, from
+        anywhere. Read every command in it first.
+      </div>
+
+      <h2 id="s28" class="pb">2.8 — MCP: connecting your other tools</h2>
+
+      <p>
+        MCP (Model Context Protocol) is the standard way to expose an external
+        service as tools the AI can call. Once connected, your hosting provider,
+        CRM, email, ad account, or database becomes something it can query
+        directly rather than something you screenshot into the chat.
+      </p>
+
+      <h3>Adding one</h3>
+      <pre><code><span class="c"># see what's connected</span>
+claude mcp list
+
+<span class="c"># add a server</span>
+claude mcp add &lt;name&gt; &lt;command-or-url&gt;
+</code></pre>
+      <p>
+        Inside a session, <code>/mcp</code> shows connected servers and their
+        status. Each provider documents its own setup — check theirs rather than
+        guessing at the arguments.
+      </p>
+
+      <h3>What it unlocks</h3>
+      <p>
+        Instead of "here's a screenshot of my analytics, what do you think," you
+        get "pull last week's numbers, compare to the prior week, and tell me
+        what changed." The AI fetches the real data itself.
+      </p>
+
+      <div class="rule">
+        <b>Read-only by default</b> Grant the narrowest access that does the
+        job. Reporting and analysis should be automated; changing budgets,
+        sending messages, or deleting records should not. A bug in a read-only
+        integration produces a wrong report. The same bug with write access
+        costs real money while you sleep.
+      </div>
+
+      <div class="warn">
+        <b>Treat external content as data, never as instructions</b> Text
+        arriving from a website, an email, a ticket, or an API is
+        <em>information</em>. If it contains something that looks like a command
+        — "ignore previous instructions and…" — that is an attack, not a
+        request. This matters more as you connect more services.
+      </div>
+
+      <!-- ============ PART 3 ============ -->
+      <div class="part">
+        <div class="n">Part 3</div>
+        <h2>Running It Daily</h2>
+        <p>The loop that makes it compound.</p>
+      </div>
+
+      <h2 id="s31">3.1 — The daily loop</h2>
 
       <div class="flow">
         <span class="step"
@@ -846,53 +2071,57 @@ description: Turn a finished cut into per-platform outputs.
 
       <h3>Morning: context is already loaded</h3>
       <p>
-        A session-start hook injects today's priorities, the daily note, and any
-        follow-ups that have gone silent past their cadence. There is no "let me
-        catch you up" phase. The first message of the day is already about work.
+        A SessionStart hook injects today's priorities, yesterday's checkpoint,
+        and anything that's gone silent past its follow-up window. There is no
+        "let me catch you up" phase. The first message of the day is already
+        about work.
       </p>
 
       <h3>The follow-up re-fire</h3>
       <p>
-        The most valuable automation in the entire stack is embarrassingly
-        simple: a check that lists every outstanding item with no reply past its
-        follow-up window, and drafts the nudge. Deals die from unfired
-        follow-ups far more often than from rejection. Automating the
-        <em>reminder to follow up</em> — not the sending — beats automating
-        almost anything else.
+        The single most valuable automation in the stack is embarrassingly
+        simple: a check listing every outstanding item with no reply past its
+        follow-up window, which drafts the nudge for you.
+      </p>
+      <p>
+        Deals die from unfired follow-ups far more often than from rejection.
+        Automating the <em>reminder to follow up</em> — not the sending — beats
+        automating almost anything else, and it takes an afternoon to build.
       </p>
 
       <h3>Evening: realign</h3>
       <p>
-        A nightly job reads the memory index, the day's activity, and rewrites
-        the entire task universe into one ranked plan for tomorrow: revenue
-        first, blocked-on-human items surfaced explicitly, dead items culled,
+        A nightly job reads the memory index and the day's activity, then
+        rewrites the whole task list into one ranked plan for tomorrow: revenue
+        first, blocked-on-you items surfaced explicitly, dead items culled,
         stale entries flagged. That plan is what the morning hook injects. The
         loop closes.
       </p>
 
-      <h3>Working modes</h3>
+      <h2 id="s32">3.2 — Working modes</h2>
+
       <div class="grid">
         <div class="card">
-          <h4>Plan mode gate</h4>
+          <h4>Plan mode</h4>
           <p class="small">
-            Before any billable or multi-file change: draft the plan, get it
-            approved, <em>then</em> execute. The plan doubles as the client
-            sign-off artifact and the billing record.
+            <kbd>Shift</kbd>+<kbd>Tab</kbd>. Research and propose, change
+            nothing until approved. Mandatory for anything billable or
+            multi-file. The approved plan doubles as your scope agreement.
           </p>
         </div>
         <div class="card">
-          <h4>Compressed mode</h4>
+          <h4>Compressed output</h4>
           <p class="small">
-            A terse output mode for long sessions. Drops filler and hedging,
-            keeps all technical substance. Meaningful token savings on
-            multi-hour work.
+            A terse mode for long sessions — drops filler and hedging, keeps
+            every bit of technical substance. Real token savings on multi-hour
+            work.
           </p>
         </div>
         <div class="card">
-          <h4>Context hygiene</h4>
+          <h4>Background work</h4>
           <p class="small">
-            Clear when switching projects. Compact at milestones. A context
-            stuffed with three unrelated projects produces confused work.
+            Long-running jobs (a build, a render, a test suite) can run detached
+            while you keep working, and notify you when they finish.
           </p>
         </div>
         <div class="card">
@@ -905,7 +2134,174 @@ description: Turn a finished cut into per-platform outputs.
         </div>
       </div>
 
-      <h2 id="seven">7 — Web &amp; Client Delivery</h2>
+      <h2 id="s33">3.3 — Context hygiene</h2>
+
+      <p>
+        The context window is finite and shared. What's in it determines output
+        quality more than any other single factor.
+      </p>
+
+      <table>
+        <tr>
+          <th style="width: 22%">Action</th>
+          <th>When</th>
+          <th>Why</th>
+        </tr>
+        <tr>
+          <td><code>/clear</code></td>
+          <td>Switching to an unrelated project or topic</td>
+          <td>
+            Leftover context from another project produces confused,
+            cross-contaminated work
+          </td>
+        </tr>
+        <tr>
+          <td><code>/compact</code></td>
+          <td>At a milestone in long work</td>
+          <td>Summarizes what's happened and frees room, keeping the thread</td>
+        </tr>
+        <tr>
+          <td>Subagent</td>
+          <td>Any big read — research, wide search, log analysis</td>
+          <td>
+            The bulk stays out of your main context; only the conclusion comes
+            back
+          </td>
+        </tr>
+        <tr>
+          <td>Don't re-read</td>
+          <td>A file read this session, unchanged</td>
+          <td>Pure waste of tokens and money</td>
+        </tr>
+      </table>
+
+      <div class="rule">
+        <b>Symptoms of a polluted context</b> It starts referencing an old
+        project, repeats work already done, ignores an instruction it followed
+        ten minutes ago, or gives vaguer answers than it did earlier. All the
+        same fix: <code>/clear</code> and restate the task in three sentences.
+        Fighting a polluted context with better prompting never works.
+      </div>
+
+      <!-- ============ PART 4 ============ -->
+      <div class="part">
+        <div class="n">Part 4</div>
+        <h2>Quality</h2>
+        <p>Nothing goes out ungraded.</p>
+      </div>
+
+      <h2 id="s41">4.1 — Quality gates</h2>
+
+      <p>
+        A gate is a check something must pass before it ships. The definition
+        that matters:
+      </p>
+
+      <div class="rule">
+        <b>Assert, don't print</b> A gate that prints a value and lets a human
+        eyeball it is not a gate. It must <em>fail loudly</em> on mismatch. "It
+        printed 48000" and "it asserted the rate is 48000" are different
+        programs, and only one of them catches the bug at 2am when nobody is
+        reading the output.
+      </div>
+
+      <p>
+        Concretely, gate anything where being wrong is expensive: client
+        deliverables, deploys, anything published, anything sent, anything
+        spending money.
+      </p>
+
+      <h2 id="s42">4.2 — The critic loop</h2>
+
+      <div class="flow">
+        <span class="step">Build</span><span class="arrow">→</span>
+        <span class="step r">Independent critique</span
+        ><span class="arrow">→</span> <span class="step r">Fix</span
+        ><span class="arrow">→</span> <span class="step r">Re-critique</span
+        ><span class="arrow">→</span>
+        <span class="step g">PASS</span>
+        <div class="small" style="margin-top: 10px">
+          Loops until pass or a round limit. Judges default to FAIL on
+          uncertainty.
+        </div>
+      </div>
+
+      <h3>Design principles</h3>
+      <ul>
+        <li>
+          <b>A false pass costs more than a false block.</b> Calibrate the whole
+          gate around that asymmetry.
+        </li>
+        <li>
+          <b>Multiple judges, reasons before scores.</b> Forcing the reasoning
+          first prevents picking a number and then justifying it.
+        </li>
+        <li>
+          <b>Verify the findings.</b> Critics invent problems too. Every finding
+          must be reproducible against the actual artifact or it's discarded.
+        </li>
+        <li>
+          <b>Track what's resolved.</b> Otherwise round three re-raises what
+          round one fixed and the loop never converges.
+        </li>
+        <li>
+          <b>Auto-fail overrides every vote.</b> A verified exposed secret, or
+          an identifiable person who didn't consent, is a hard stop regardless
+          of how good everything else is.
+        </li>
+      </ul>
+
+      <h3>The minimum viable version</h3>
+      <p>You don't need a framework to start. Do this:</p>
+      <pre><code>Spawn a fresh subagent that has NOT seen our conversation.
+
+Give it: the file at ./deliverable.html, and this rubric —
+[correctness, completeness against the brief, anything a client
+would notice as sloppy].
+
+Tell it to default to FAIL on uncertainty, and to report each
+finding with a specific location and why it matters.
+
+Then show me its verdict. Don't fix anything yet.
+</code></pre>
+      <p>
+        That single move — an independent pair of eyes with no stake in the
+        build — catches an embarrassing amount.
+      </p>
+
+      <h2 id="s43" class="pb">4.3 — Green is not the same as good</h2>
+
+      <div class="rule">
+        <b
+          >Passing gates measures the absence of defects, not the presence of
+          quality</b
+        >
+        A video can clear every technical check — correct codec, clean audio, no
+        privacy leak — and still be badly edited. A site can pass every audit
+        and still be ugly and unconvincing. A proposal can be factually flawless
+        and completely unpersuasive.<br /><br />
+        Automated gates catch <em>failures</em>. Craft still requires a human
+        with taste to watch it, read it, and say yes. Never mistake a green
+        board for a good deliverable.
+      </div>
+
+      <h3>Multi-model review</h3>
+      <p>
+        For high-stakes work, have a second and third model from different
+        providers review the same artifact. Different training produces
+        genuinely different blind spots; agreement across model families is a
+        far stronger signal than one model's confidence. Use it selectively — it
+        costs real tokens and most work doesn't need it.
+      </p>
+
+      <!-- ============ PART 5 ============ -->
+      <div class="part">
+        <div class="n">Part 5</div>
+        <h2>Web &amp; Client Delivery</h2>
+        <p>How a site actually gets built and handed over.</p>
+      </div>
+
+      <h2 id="s51">5 — Web &amp; client delivery</h2>
 
       <div class="flow">
         <span class="step">Onboard</span><span class="arrow">→</span
@@ -923,9 +2319,21 @@ description: Turn a finished cut into per-platform outputs.
         captures the thing everyone forgets until it breaks:
         <b>the deploy target and its specific quirks</b>. Some hosts take a git
         push. Some take a manual archive upload. Some need a cache purge
-        afterward or the old build stays live. Writing that down once, per
-        client, at the start, prevents the "why is my fix not showing" hour
-        later.
+        afterward or the old build stays live. Some need a specific PHP version.
+      </p>
+      <p>
+        Writing that down once, per client, at the start, prevents the "why is
+        my fix not showing" hour later — an hour that happens on every project
+        where it wasn't written down.
+      </p>
+
+      <h3>Design tokens before pixels</h3>
+      <p>
+        Colors, type scale, spacing, radii, shadows — defined once in one file,
+        referenced everywhere. Never a hardcoded hex in a component. When the
+        client says "make it warmer," that's one edit rather than forty. This is
+        the difference between a site you can revise and a site you have to
+        rebuild.
       </p>
 
       <h3>Speculative builds beat proposals</h3>
@@ -935,16 +2343,16 @@ description: Turn a finished cut into per-platform outputs.
       </p>
       <div class="rule">
         <b>Never let a spec demo tell a lie</b> If a demo shows metrics,
-        testimonials, or logos, they must be labelled as illustrative above the
-        fold — not buried in a footer. Fabricated proof in a pitch is the
-        fastest way to lose a client you were about to win, and it can outlive
-        the pitch on the open web.
+        testimonials, or logos, they must be labelled as illustrative
+        <em>above the fold</em> — not buried in a footer. Fabricated proof is
+        the fastest way to lose a client you were about to win, and it can
+        outlive the pitch on the open web.
       </div>
 
       <h3>Pre-ship audit dimensions</h3>
       <table>
         <tr>
-          <th style="width: 24%">Dimension</th>
+          <th style="width: 22%">Dimension</th>
           <th>Checked for</th>
         </tr>
         <tr>
@@ -956,7 +2364,7 @@ description: Turn a finished cut into per-platform outputs.
         <tr>
           <td>Links</td>
           <td>
-            Every internal and external link resolved; no 404s, no placeholder
+            Every internal and external link resolves; no 404s, no placeholder
             anchors
           </td>
         </tr>
@@ -978,7 +2386,7 @@ description: Turn a finished cut into per-platform outputs.
         </tr>
         <tr>
           <td>Security</td>
-          <td>Exposed keys, dependency advisories, misconfigured headers</td>
+          <td>Exposed keys, dependency advisories, missing headers</td>
         </tr>
       </table>
 
@@ -992,13 +2400,20 @@ description: Turn a finished cut into per-platform outputs.
         <span class="small">(This guide is built exactly that way.)</span>
       </p>
 
-      <h2 id="eight" class="pb">8 — Video Production Pipeline</h2>
+      <!-- ============ PART 6 ============ -->
+      <div class="part">
+        <div class="n">Part 6</div>
+        <h2>Video Production</h2>
+        <p>Where the failure modes are silent and the gates matter most.</p>
+      </div>
+
+      <h2 id="s61">6 — Video production pipeline</h2>
 
       <p>
-        Video is where the most scar tissue lives, because the failure modes are
-        silent. A render can "succeed," produce a file, and still be unusable —
-        wrong audio rate, missing frames, a privacy leak in one corner of one
-        shot.
+        Video carries the most scar tissue, because a render can "succeed,"
+        produce a file, and still be unusable — wrong audio rate, missing
+        frames, a privacy leak in one corner of one shot. Nothing errors. It
+        just looks fine and isn't.
       </p>
 
       <div class="flow">
@@ -1057,37 +2472,37 @@ description: Turn a finished cut into per-platform outputs.
       </table>
 
       <div class="rule">
-        <b>Assert, don't print</b> A gate that prints a property and lets a
-        human eyeball it is not a gate. It must fail loudly on mismatch. "It
-        printed 48000" and "it asserted the rate is 48000" are different
-        programs, and only one of them catches the bug at 2am.
-      </div>
-
-      <div class="rule">
         <b>Clearance is resolution-specific</b> If you clear a video at one
         framing and later widen the crop or re-derive at higher resolution,
         every clearance is void. The wider frame contains pixels nobody has ever
-        checked. Re-derive geometry from the original source and re-run every
-        gate.
+        checked. Re-derive the geometry from the original source and re-run
+        every gate.
       </div>
 
       <h3>Hybrid rendering</h3>
       <p>
         The pattern that works: assemble the heavy video with a fast native
         encoder, render the fancy animated overlay separately as a transparent
-        alpha layer, then composite. Pushing 4K source through a JavaScript
-        animation renderer chokes; keeping them in separate lanes gives you both
-        premium motion and a render that finishes.
+        alpha layer, then composite the two. Pushing 4K source through a
+        JavaScript animation renderer chokes; keeping them in separate lanes
+        gives you both premium motion and a render that actually finishes.
       </p>
 
-      <h2 id="nine">9 — Content &amp; Distribution</h2>
+      <!-- ============ PART 7 ============ -->
+      <div class="part">
+        <div class="n">Part 7</div>
+        <h2>Content &amp; Distribution</h2>
+        <p>Making AI-assisted writing that doesn't read like AI.</p>
+      </div>
+
+      <h2 id="s71">7 — Content &amp; distribution</h2>
 
       <h3>The engine</h3>
       <p>
         One command produces a full day's pack across every channel — long post,
         carousel, short-form script, platform-native variants. Voice is locked
-        to a template so output stays recognizably human and consistent rather
-        than drifting into generic assistant prose.
+        to a template so output stays recognizably yours rather than drifting
+        into generic assistant prose.
       </p>
 
       <h3>Three passes every piece must survive</h3>
@@ -1096,7 +2511,8 @@ description: Turn a finished cut into per-platform outputs.
           <h4>Humanizer</h4>
           <p class="small">
             Strips AI tells: the em-dash tic, "in today's fast-paced world,"
-            tri-colon structures, hollow transitions, over-hedged claims.
+            rule-of-three lists everywhere, hollow transitions, over-hedged
+            claims.
           </p>
         </div>
         <div class="card">
@@ -1117,7 +2533,7 @@ description: Turn a finished cut into per-platform outputs.
 
       <h3>Specificity is the authenticity signal</h3>
       <p>
-        Generic content reads as machine-written regardless of how well it's
+        Generic content reads as machine-written no matter how well it's
         phrased. Concrete detail woven into the body — a real place, a real
         number, a real constraint you hit — is what makes it land. Woven, not
         pasted: a specific sentence dropped into an otherwise generic paragraph
@@ -1129,11 +2545,11 @@ description: Turn a finished cut into per-platform outputs.
         <li>
           <b>Platform classifiers move.</b> A CTA pattern that worked for a year
           can start suppressing reach overnight. Retire tactics on evidence, not
-          on sentiment.
+          sentiment.
         </li>
         <li>
-          <b>Scheduling clock is the account's timezone, not yours.</b> Read it
-          live from the API every build. Assuming it burns an entire drip.
+          <b>The scheduling clock is the account's timezone, not yours.</b> Read
+          it live from the API on every build. Assuming it burns an entire drip.
         </li>
         <li>
           <b>Test row one before trusting the batch.</b> A ten-post schedule
@@ -1145,12 +2561,20 @@ description: Turn a finished cut into per-platform outputs.
         </li>
       </ul>
 
-      <h2 id="ten" class="pb">10 — Automation (n8n / VPS)</h2>
+      <!-- ============ PART 8 ============ -->
+      <div class="part">
+        <div class="n">Part 8</div>
+        <h2>Automation</h2>
+        <p>Things that run without you — safely.</p>
+      </div>
+
+      <h2 id="s81">8 — Automation (n8n / VPS)</h2>
 
       <p>
         Long-running automations — inbox triage, lead pipelines, scheduled
-        sweeps — live on a small VPS running a workflow engine, not on the
-        laptop. The laptop is for building; the server is for running.
+        sweeps — belong on a small always-on server running a workflow engine,
+        not on your laptop. The laptop is for building; the server is for
+        running. A laptop that sleeps is not infrastructure.
       </p>
 
       <h3>The loop gate — three caps and a breaker</h3>
@@ -1167,8 +2591,8 @@ description: Turn a finished cut into per-platform outputs.
         </ol>
         <p style="margin-top: 8px">
           All four live in <b>config</b>, never in a prompt. A cap that exists
-          only as an instruction in a prompt is not a cap — it's a suggestion to
-          a system that can misread it.
+          only as an instruction inside a prompt is not a cap — it's a
+          suggestion to a system that can misread it.
         </p>
       </div>
 
@@ -1176,17 +2600,19 @@ description: Turn a finished cut into per-platform outputs.
       <p>
         "The workflow ran successfully" is a near-useless signal. A workflow
         that ran 40 times and produced identical empty output every time reports
-        as perfectly healthy. Monitor the <em>shape of the output</em>: how many
-        items, what variety, what changed versus yesterday. Silent degradation
-        is the normal failure mode of automation, and liveness checks are blind
-        to it.
+        as perfectly healthy.
+      </p>
+      <p>
+        Monitor the <em>shape of the output</em>: how many items, what variety,
+        what changed versus yesterday. Silent degradation is the normal failure
+        mode of automation, and liveness checks are blind to it.
       </p>
 
       <h3>Outbound discipline</h3>
       <ul>
         <li>
-          <b>Low daily volume, warmed sender.</b> Volume is what kills domains,
-          not content.
+          <b>Low daily volume, warmed sender.</b> Volume kills domains, not
+          content.
         </li>
         <li>
           <b>Validate addresses before sending.</b> Bounce rate is the
@@ -1202,7 +2628,7 @@ description: Turn a finished cut into per-platform outputs.
         </li>
         <li>
           <b>AI review is a sensor, never a verdict.</b> It flags, scores, and
-          drafts. A human presses send on anything that leaves the building.
+          drafts. A human presses send on anything leaving the building.
         </li>
       </ul>
 
@@ -1210,34 +2636,41 @@ description: Turn a finished cut into per-platform outputs.
         <b>Audit the running estate, not the plan file</b> The plan says a
         workflow is active. The plan is a document; it has no idea what the
         server is doing. Before reporting status, query the actual engine, the
-        actual mailbox, the actual DNS. Documents drift from reality within
-        days, and a status report built from a document is fiction.
+        actual mailbox, the actual DNS record. Documents drift from reality
+        within days, and a status report built from a document is fiction.
       </div>
 
-      <h2 id="eleven">11 — Paid Ads Discipline</h2>
+      <!-- ============ PART 9 ============ -->
+      <div class="part">
+        <div class="n">Part 9</div>
+        <h2>Paid Ads</h2>
+        <p>Where mistakes cost money per hour.</p>
+      </div>
+
+      <h2 id="s91">9 — Paid ads discipline</h2>
 
       <h3>Tracking before spending</h3>
       <p>
-        The most expensive ad mistake possible: run a campaign for days, get
-        clicks, get zero recorded conversions — and discover the conversion
-        event never fired because the tracking code was written but never
+        The most expensive ad mistake available: run a campaign for days, get
+        clicks, get zero recorded conversions — then discover the conversion
+        event never fired, because the tracking code was written but never
         deployed, or an environment variable was never set in production.
       </p>
       <div class="rule">
         <b
-          >Fire the conversion event manually and see it land before spending a
-          cent</b
+          >Fire the conversion event manually and watch it land before spending
+          a cent</b
         >
         Not "the code is committed." Not "it looks right." Trigger the real
-        event, watch it arrive in the platform's event dashboard, then turn on
-        budget.
+        event, see it arrive in the platform's event dashboard,
+        <em>then</em> turn on budget.
       </div>
 
       <h3>Rules set before launch, not during</h3>
       <table>
         <tr>
           <th style="width: 26%">Rule</th>
-          <th>Set in advance</th>
+          <th>Decided in advance</th>
         </tr>
         <tr>
           <td>Kill threshold</td>
@@ -1261,7 +2694,7 @@ description: Turn a finished cut into per-platform outputs.
         </tr>
         <tr>
           <td>Reallocation cadence</td>
-          <td>How often budget moves and by what maximum step</td>
+          <td>How often budget moves, and by what maximum step</td>
         </tr>
         <tr>
           <td>Max concurrent tests</td>
@@ -1272,91 +2705,20 @@ description: Turn a finished cut into per-platform outputs.
         </tr>
       </table>
 
-      <h3>Read-only by default</h3>
       <p>
-        The ads integration is configured read-only. Reporting, analysis, and
-        recommendations are automated; changing budgets or activating campaigns
-        requires a human. An automation bug that misreads a metric costs a wrong
-        report. The same bug with write access costs real money while you sleep.
+        The reason to decide these before launch is psychological, not
+        technical. Once money is spent, you will find reasons to give a losing
+        ad one more day. A threshold set in advance doesn't negotiate.
       </p>
 
-      <h2 id="twelve" class="pb">12 — Quality Gates</h2>
-
-      <p>
-        Nothing billable, deployable, or public goes out without an independent
-        grade from something that did not build it.
-      </p>
-
-      <h3>The critic loop</h3>
-      <div class="flow">
-        <span class="step">Build</span><span class="arrow">→</span>
-        <span class="step r">Independent critique</span
-        ><span class="arrow">→</span> <span class="step r">Fix</span
-        ><span class="arrow">→</span> <span class="step r">Re-critique</span
-        ><span class="arrow">→</span>
-        <span class="step g">PASS</span>
-        <div class="small" style="margin-top: 10px">
-          Loops until pass or a round limit. Judges default to FAIL on
-          uncertainty.
-        </div>
+      <!-- ============ PART 10 ============ -->
+      <div class="part">
+        <div class="n">Part 10</div>
+        <h2>Hard Rules, Machine, Security</h2>
+        <p>The portable part. Every one of these was learned expensively.</p>
       </div>
 
-      <h3>Design principles behind the gate</h3>
-      <ul>
-        <li>
-          <b>A false pass costs more than a false block.</b> Calibrate the whole
-          gate around that asymmetry.
-        </li>
-        <li>
-          <b>Multiple judges, reasons before scores.</b> Forcing the reasoning
-          first prevents a number being picked and then justified.
-        </li>
-        <li>
-          <b>A verification unit kills hallucinated faults.</b> Critics invent
-          problems too. Every finding must be reproducible against the artifact
-          or it's discarded.
-        </li>
-        <li>
-          <b>Resolved findings are tracked.</b> Otherwise round three re-raises
-          what round one fixed and the loop never converges.
-        </li>
-        <li>
-          <b>Auto-fail overrides every vote.</b> A verified exposed secret or an
-          unconsented identifiable face is a hard stop regardless of how good
-          everything else is.
-        </li>
-      </ul>
-
-      <h3>Green is not the same as good</h3>
-      <div class="rule">
-        <b
-          >Passing gates measures the absence of defects, not the presence of
-          quality</b
-        >
-        A video can clear every technical check — correct codec, clean audio, no
-        privacy leak — and still be badly edited. A site can pass every audit
-        and still be ugly and unconvincing. Automated gates catch
-        <em>failures</em>. Craft still requires a human with taste to watch it,
-        read it, and say yes. Never mistake a green board for a good
-        deliverable.
-      </div>
-
-      <h3>Multi-model review</h3>
-      <p>
-        For high-stakes work, a second and third model from different providers
-        review the same artifact. Different training produces genuinely
-        different blind spots; agreement across families is a much stronger
-        signal than one model's confidence. Used selectively — it costs real
-        tokens and most work doesn't need it.
-      </p>
-
-      <h2 id="thirteen">13 — Hard Rules (Scar Tissue)</h2>
-
-      <p>
-        Each of these exists because it was learned expensively. This section is
-        the most portable part of the document — these apply to almost anyone
-        doing AI-assisted work.
-      </p>
+      <h2 id="s101">10.1 — Hard rules (scar tissue)</h2>
 
       <div class="rule">
         <b>Committed is not deployed</b> A commit proves nothing about
@@ -1384,7 +2746,7 @@ description: Turn a finished cut into per-platform outputs.
       <div class="rule">
         <b>A spot check is not proof</b> Verifying three files out of two
         hundred tells you three files are fine. If a claim covers a set, verify
-        the set or state the sample size explicitly.
+        the set — or state the sample size explicitly.
       </div>
 
       <div class="rule">
@@ -1410,7 +2772,7 @@ description: Turn a finished cut into per-platform outputs.
       <div class="rule">
         <b>Filenames re-identify anonymized material</b> You blurred the faces
         and bleeped the names, then shipped a file whose name contains the
-        company. Grep the <em>rendered output and its metadata</em>, not the
+        company. Check the <em>rendered output and its metadata</em>, not the
         source project.
       </div>
 
@@ -1427,33 +2789,29 @@ description: Turn a finished cut into per-platform outputs.
         writing, once.
       </div>
 
-      <h2 id="fourteen" class="pb">14 — Machine &amp; Cost Discipline</h2>
+      <h2 id="s102" class="pb">10.2 — Machine &amp; cost discipline</h2>
 
       <h3>Never freeze the box</h3>
       <div class="rule">
         <b>Every heavy job reserves a fixed share of CPU for the human</b>
-        Renders, encodes, batch processing — all run at lowered priority with a
+        Renders, encodes, batch processing — all run at lowered priority, with a
         headroom check before starting and a worker pool capped below the core
         count. Never two heavy jobs at once.<br /><br />
-        A render that takes 40 minutes instead of 25 is fine. A frozen machine
-        for 25 minutes is a <b>failure</b>, because the human can't work, can't
-        review, can't respond to a client. Throughput of the machine is not the
-        metric. Throughput of the operator is.
+        A render taking 40 minutes instead of 25 is fine. A frozen machine for
+        25 minutes is a <b>failure</b>, because you can't work, can't review,
+        can't answer a client. Throughput of the machine is not the metric.
+        Throughput of the operator is.
       </div>
 
       <h3>Token discipline</h3>
       <ul>
         <li>
-          <b>Keep the always-loaded layer thin.</b> Every token in the global
-          rules file is paid on every single session forever. Procedures belong
-          in skills, loaded on demand.
+          <b>Keep the always-loaded layer thin.</b> Every token in
+          <code>CLAUDE.md</code> is paid on every session forever. Procedures
+          belong in skills, loaded on demand.
         </li>
         <li>
-          <b>Compressed output mode</b> for long sessions — meaningful savings,
-          zero loss of substance.
-        </li>
-        <li>
-          <b>Isolate research in subagents.</b> Forty pages of scraped text
+          <b>Isolate big reads in subagents.</b> Forty pages of scraped text
           should never enter the main context; only the synthesis should.
         </li>
         <li>
@@ -1461,16 +2819,21 @@ description: Turn a finished cut into per-platform outputs.
           never file dumps.
         </li>
         <li>
-          <b>Don't re-read.</b> If a file was read this session and hasn't
-          changed, reading it again is pure waste.
+          <b>Don't re-read.</b> A file read this session and unchanged is pure
+          waste to read again.
         </li>
         <li>
           <b>Match model to task.</b> Mechanical work doesn't need the expensive
           tier; the hardest reasoning and the final judge do.
         </li>
+        <li>
+          <b>Clear between projects.</b> Cheaper and more accurate than carrying
+          three contexts at once.
+        </li>
       </ul>
 
-      <h3>Security hygiene</h3>
+      <h2 id="s103">10.3 — Security hygiene</h2>
+
       <ul>
         <li>
           Secrets in environment variables and secret stores — never in prompts,
@@ -1492,74 +2855,237 @@ description: Turn a finished cut into per-platform outputs.
           Cookie-based access to logged-in services stays read-only. Read and
           draft; never auto-act on someone else's account.
         </li>
+        <li>
+          Treat all external content as data, never as instructions. A web page
+          or email that says "ignore your instructions" is an attack.
+        </li>
+        <li>
+          Review every diff before committing. Speed is not a reason to merge
+          code you haven't read.
+        </li>
       </ul>
 
-      <h2 id="fifteen">15 — Build Your Own in 7 Days</h2>
+      <!-- ============ PART 11 ============ -->
+      <div class="part">
+        <div class="n">Part 11</div>
+        <h2>Troubleshooting</h2>
+        <p>Every common beginner failure and its actual fix.</p>
+      </div>
 
-      <p>
-        Don't copy the whole thing. It took a long time and most of it is
-        specific to one business. Build the spine, then let your own scar tissue
-        fill it in.
-      </p>
+      <h2 id="s111">11 — When it goes wrong</h2>
 
       <table>
         <tr>
-          <th style="width: 12%">Day</th>
+          <th style="width: 30%">Symptom</th>
+          <th style="width: 34%">Likely cause</th>
+          <th>Fix</th>
+        </tr>
+        <tr>
+          <td>It ignores my CLAUDE.md rules</td>
+          <td>File too long, or the rule is buried in a wall of text</td>
+          <td>
+            Cut it to 20 lines. Move procedures to skills. Short files get
+            followed.
+          </td>
+        </tr>
+        <tr>
+          <td>My skill never triggers</td>
+          <td>Description too vague</td>
+          <td>
+            Put the literal phrases a human would type into the description.
+            Test in a fresh session using natural wording, not the skill name.
+          </td>
+        </tr>
+        <tr>
+          <td>It keeps forgetting things</td>
+          <td>You're correcting in-conversation instead of saving</td>
+          <td>
+            Use <code>#</code> to save it as a memory the moment you notice.
+          </td>
+        </tr>
+        <tr>
+          <td>Answers got vague / it's repeating itself</td>
+          <td>Context is full or polluted</td>
+          <td>
+            <code>/clear</code>, then restate the task in three sentences. More
+            prompting won't fix it.
+          </td>
+        </tr>
+        <tr>
+          <td>It says done, but nothing changed</td>
+          <td>It edited a different file, or in a different folder</td>
+          <td>
+            Ask for the absolute path of every file it touched. Check you
+            started it in the right directory.
+          </td>
+        </tr>
+        <tr>
+          <td>"It works" but production is unchanged</td>
+          <td>
+            Committed, not pushed. Or pushed but not deployed. Or deployed but
+            cached.
+          </td>
+          <td>
+            Check <code>git log origin/main..HEAD</code>, check the deploy ran,
+            purge cache, fetch the live URL.
+          </td>
+        </tr>
+        <tr>
+          <td>It's slow on multi-part tasks</td>
+          <td>Running sequentially</td>
+          <td>
+            Say explicitly: "these are independent, launch all of them in
+            parallel in one message."
+          </td>
+        </tr>
+        <tr>
+          <td>Costs are higher than expected</td>
+          <td>
+            Bloated always-loaded layer, re-reading files, big research in main
+            context
+          </td>
+          <td>
+            Thin the rules file, use subagents for research,
+            <code>/clear</code> between projects.
+          </td>
+        </tr>
+        <tr>
+          <td>It made up a file, function, or flag</td>
+          <td>Asked to recall rather than to check</td>
+          <td>
+            Tell it to verify against the actual filesystem or docs before
+            asserting. Fabrication happens most when it's guessing under
+            pressure.
+          </td>
+        </tr>
+        <tr>
+          <td>It did something I didn't want</td>
+          <td>Ambiguous instruction, or permissions too loose</td>
+          <td>
+            Use plan mode. Tighten permissions. And write a memory so that class
+            of misread doesn't repeat.
+          </td>
+        </tr>
+        <tr>
+          <td>A subagent came back useless</td>
+          <td>Thin brief</td>
+          <td>
+            Rewrite with all six parts: mission, done-when, context, autonomy,
+            quality bar, return contract.
+          </td>
+        </tr>
+        <tr>
+          <td>The whole thing feels like overhead</td>
+          <td>You built structure before you had repetition</td>
+          <td>
+            Delete what you don't use. Only build a skill after the second time
+            you did the thing by hand.
+          </td>
+        </tr>
+      </table>
+
+      <div class="rule">
+        <b>The universal first move</b> When something is behaving strangely,
+        before debugging anything else: <code>/clear</code> and try once more
+        with a clean context and a three-sentence statement of the task. A
+        surprising share of "the AI is being dumb" is a context problem, and
+        this costs ten seconds to rule out.
+      </div>
+
+      <!-- ============ PART 12 ============ -->
+      <div class="part">
+        <div class="n">Part 12</div>
+        <h2>Build Your Own in 7 Days</h2>
+        <p>One thing per day. Don't skip ahead.</p>
+      </div>
+
+      <h2 id="s121">12 — The seven days</h2>
+
+      <table>
+        <tr>
+          <th style="width: 9%">Day</th>
           <th style="width: 30%">Build</th>
-          <th>Why this order</th>
+          <th>Exercise</th>
         </tr>
         <tr>
           <td><b>1</b></td>
-          <td>Global rules file — facts always true, 20 lines max</td>
+          <td>Install it, run the first-20-minutes exercises</td>
           <td>
-            Instant behavioral consistency. Resist the urge to make it long;
-            you'll pay for every line forever.
+            Get it building, breaking, and fixing a small HTML page. Learn
+            <code>!</code> and <code>#</code>. Nothing else.
           </td>
         </tr>
         <tr>
           <td><b>2</b></td>
+          <td>Global <code>CLAUDE.md</code> — 20 lines max</td>
           <td>
-            Memory folder + index. Write 5 facts your assistant re-asks about
-          </td>
-          <td>
-            Kills the re-briefing tax immediately. Most visible day-one win.
+            Copy the starter file in §2.1. Change three lines to match how you
+            actually work. Resist adding more.
           </td>
         </tr>
         <tr>
           <td><b>3</b></td>
-          <td>Your first skill — the workflow you've explained most often</td>
+          <td>Memory folder + index</td>
           <td>
-            Teaches the format on a case where you already know every gotcha.
+            Write five facts it re-asks you about every session. Use the file
+            format in §2.2. Add each to the index.
           </td>
         </tr>
         <tr>
           <td><b>4</b></td>
-          <td>One quality gate on your highest-stakes output</td>
+          <td>Your first skill</td>
           <td>
-            An independent grader on the thing that costs most when it's wrong.
+            Pick the workflow you've explained most often. Do it once by hand
+            with Claude Code, then say "turn what we just did into a skill."
+            Test that it fires from natural phrasing.
           </td>
         </tr>
         <tr>
           <td><b>5</b></td>
-          <td>Parallel agents on one genuinely independent task set</td>
+          <td>One quality gate</td>
           <td>
-            Feeling four-at-once is what changes how you scope everything after.
+            On your highest-stakes output, spawn a fresh subagent to grade it
+            against a rubric before you send. Use the prompt in §4.2.
           </td>
         </tr>
         <tr>
           <td><b>6</b></td>
-          <td>A session-start hook injecting today's priorities</td>
+          <td>Parallel agents, once</td>
           <td>
-            Closes the loop between sessions. This is what makes it feel like a
-            system.
+            Find a task with four genuinely independent parts. Launch all four
+            at once. Feeling this is what changes how you scope everything
+            afterward.
           </td>
         </tr>
         <tr>
           <td><b>7</b></td>
-          <td>Checkpoint + realign routine</td>
-          <td>State survives the session. Compounding starts here.</td>
+          <td>A SessionStart hook + a checkpoint habit</td>
+          <td>
+            Have the session open with today's priorities. End the day writing
+            what shipped, what's blocked, what's next. Now it compounds.
+          </td>
         </tr>
       </table>
+
+      <h3>What to expect</h3>
+      <ul>
+        <li>
+          <b>Day 2–3</b> feels like admin. It is. The payoff isn't visible yet.
+        </li>
+        <li>
+          <b>Day 4–5</b> is the first real "oh" — a workflow that used to take
+          explaining now takes one word.
+        </li>
+        <li>
+          <b>Week 2–3</b> is when it starts feeling like infrastructure. You
+          stop thinking about the tool and think about the work.
+        </li>
+        <li>
+          <b>Month 2</b> is when the feedback memories have accumulated enough
+          that it stops making the mistakes it used to make. That's the
+          compounding.
+        </li>
+      </ul>
 
       <h3>The three habits that matter more than any tool</h3>
       <div class="grid3">
@@ -1581,9 +3107,69 @@ description: Turn a finished cut into per-platform outputs.
           <h4>Parallel by default</h4>
           <p class="small">
             Ask "do these depend on each other?" before every multi-part task.
-            Usually they don't, and sequential was a habit not a requirement.
+            Usually they don't, and sequential was a habit, not a requirement.
           </p>
         </div>
+      </div>
+
+      <h2 id="s131" class="pb">13 — One-page cheat sheet</h2>
+
+      <div class="card">
+        <h4>Start / stop</h4>
+        <p class="small">
+          <code>cd project-folder</code> then <code>claude</code> &middot;
+          <code>claude --continue</code> resumes last &middot;
+          <code>claude --resume</code> picks a session &middot;
+          <kbd>Ctrl</kbd>+<kbd>C</kbd> twice to quit
+        </p>
+
+        <h4>In-session</h4>
+        <p class="small">
+          <code>/help</code> everything available &middot;
+          <code>/clear</code> wipe context &middot;
+          <code>/compact</code> summarize &middot; <code>/memory</code> edit
+          memory files &middot; <code>/agents</code> manage subagents &middot;
+          <code>/mcp</code> connected services &middot; <kbd>Shift</kbd>+<kbd
+            >Tab</kbd
+          >
+          plan mode
+        </p>
+
+        <h4>Prefixes</h4>
+        <p class="small">
+          <code>!command</code> run a shell command inline &middot;
+          <code>#fact</code> save a durable memory
+        </p>
+
+        <h4>File locations</h4>
+        <p class="small">
+          <code>~/.claude/CLAUDE.md</code> rules &middot;
+          <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code> &middot;
+          <code>~/.claude/agents/&lt;name&gt;.md</code> &middot;
+          <code>~/.claude/commands/&lt;name&gt;.md</code> →
+          <code>/name</code> &middot; <code>~/.claude/settings.json</code> hooks
+          &amp; permissions &middot; <code>./CLAUDE.md</code> per-project rules
+        </p>
+
+        <h4>The four decisions</h4>
+        <p class="small">
+          <b>Always true?</b> → rules file &middot;
+          <b>A fact about my world?</b> → memory &middot; <b>A procedure?</b> →
+          skill &middot; <b>Independent work?</b> → parallel agents
+        </p>
+
+        <h4>Before anything ships</h4>
+        <p class="small">
+          Independent grader that didn't build it &middot; defaults to FAIL on
+          uncertainty &middot; findings must be reproducible &middot; a human
+          looks at it with taste before it goes
+        </p>
+
+        <h4>Never without a human</h4>
+        <p class="small">
+          Sending outward &middot; spending money &middot; bulk deletion
+          &middot; credentials
+        </p>
       </div>
 
       <div class="rule">
@@ -1595,14 +3181,17 @@ description: Turn a finished cut into per-platform outputs.
 
       <footer>
         <p>
-          <b>The AI Operating System</b> — a practitioner's guide to running
-          real work on Claude Code.<br />
+          <b>The AI Operating System</b> — a beginner's complete guide to
+          running real work on Claude Code.<br />
           Generic by design: no client data, no credentials, no proprietary
           internals. Every rule here was learned by breaking something first.
         </p>
         <p class="small">
-          Built as a single self-contained HTML file. Print to PDF from any
-          browser.
+          Built as a single self-contained HTML file — no dependencies, no
+          tracking, no build step. Open it in any browser and press Save as PDF
+          to regenerate the PDF.<br />
+          Commands and file paths reflect Claude Code as of August 2026.
+          Features move; run <code>/help</code> for what's true on your machine.
         </p>
       </footer>
     </div>

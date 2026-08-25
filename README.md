@@ -2,36 +2,33 @@
 
 **How one person runs a full digital agency — websites, video, ads, automation, outreach — on top of Claude Code.**
 
-A practitioner's guide to the daily stack: memory, skills, subagents, quality gates, and the hard-won rules that stop expensive mistakes from repeating.
+A complete beginner's guide — from "I've never opened a terminal" to a system that remembers your business, runs your workflows, and grades its own output before you send it.
+
+Written for someone starting from zero. Every file you need is written out in full so you can copy and paste.
 
 ---
 
 ## Read it
 
 - **Online:** https://waseemnasir2k26.github.io/ai-operating-system-guide/
-- **PDF (24 pages):** [AI-Operating-System-Guide.pdf](./AI-Operating-System-Guide.pdf)
+- **PDF (61 pages):** [AI-Operating-System-Guide.pdf](./AI-Operating-System-Guide.pdf)
 
 ---
 
 ## What's inside
 
-| #   | Section                                                             |
-| --- | ------------------------------------------------------------------- |
-| 1   | The Core Idea — AI as an OS, not a chat box                         |
-| 2   | The Four Layers — memory, rules, skills, agents                     |
-| 3   | Memory: The Brain — one fact per file, four types                   |
-| 4   | Skills: Frozen Procedures — anatomy of one that actually fires      |
-| 5   | Subagents & Parallelism — elite briefs, worktree isolation          |
-| 6   | The Daily Loop — morning inject → build → gate → nightly realign    |
-| 7   | Web & Client Delivery — onboarding gate, pre-ship audit             |
-| 8   | Video Production Pipeline — the gates that catch silent failures    |
-| 9   | Content & Distribution — humanizer, no-fake-claims, anti-repetition |
-| 10  | Automation — three caps and a circuit breaker                       |
-| 11  | Paid Ads Discipline — tracking before spending                      |
-| 12  | Quality Gates — never grade your own work                           |
-| 13  | Hard Rules (Scar Tissue) — the portable part                        |
-| 14  | Machine & Cost Discipline — never freeze the box                    |
-| 15  | Build Your Own in 7 Days                                            |
+| Part | Sections |
+| --- | --- |
+| **0 — Ground Floor** | What Claude Code is · the terminal in 5 min · installing it · your first 20 minutes · the permission model · full glossary · where every file lives |
+| **1 — The Idea** | Chat box vs operating system · the four layers · rules vs skills vs memory |
+| **2 — Building It** | CLAUDE.md (full starter file) · memory (full file format) · skills (full working skill) · slash commands · subagents (agent definition + brief template) · parallelism · hooks (real configs) · MCP |
+| **3 — Running It** | The daily loop · working modes · context hygiene |
+| **4 — Quality** | Quality gates · the critic loop · green is not good |
+| **5–9 — Real Work** | Web & client delivery · video pipeline · content & distribution · automation (n8n/VPS) · paid ads |
+| **10 — Hard Rules** | 10 scar-tissue rules · machine & cost discipline · security hygiene |
+| **11 — Troubleshooting** | 12 common failures, each with the actual fix |
+| **12 — 7-Day Plan** | One build per day, with the exercise |
+| **13 — Cheat Sheet** | One printable page |
 
 ---
 
