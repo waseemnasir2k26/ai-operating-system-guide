@@ -8,6 +8,10 @@ Written for someone starting from zero. Every file you need is written out in fu
 
 ---
 
+## Status
+
+Last reviewed: September 2026 · release v2026.09
+
 ## Read it
 
 - **Online:** https://waseemnasir2k26.github.io/ai-operating-system-guide/
