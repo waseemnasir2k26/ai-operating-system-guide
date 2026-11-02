@@ -62,4 +62,4 @@ Built by [Waseem Nasir](https://www.skynetjoe.com/?utm_source=github&utm_medium=
 
 - Hire on Fiverr: https://www.fiverr.com/agencies/skynetjoellc
 - Hire on Upwork: https://www.upwork.com/freelancers/muhammadwaseemnasir
-- Book a free call: https://calendly.com/skynetlabs/schedule-a-free-consultation
+- Book a free call: https://wa.me/6281316077185
